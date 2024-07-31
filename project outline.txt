@@ -1,0 +1,117 @@
+
+Generate Private and Public Keys
+	Prompt to input two positive integers (p and q) less than 50 
+		int p
+		int q
+
+	if (0 < p < 50 || 0 < q < 50)
+		
+		Print error
+		Return to prompt for correct input
+
+	Check that p and q are prime
+		//are they supposed to be prime or not prime?
+		Call function to check that p and q are prime
+		
+		if (p not prime || q not prime)
+
+			Print error
+			Return to prompt for correct input
+
+	Calculate modulus n
+
+		int n = p * q
+
+	Calculate totient theta
+
+		int theta = (p-1) * (q-1)
+
+	cpubexp //generate public key exponent
+
+		Prompt to input e
+		int e
+		
+		if (e < 0)
+
+			Print error
+			Prompt for new e
+
+		if !(1 < e < theta)
+
+			Print error
+			Prompt for new e
+
+		Calculate gcd for e and theta
+		//unsure how to implement this
+		if (gcd > 1)
+
+			Print error
+			Prompt for new e		
+
+	cprivexp //generate private key exponent
+		
+		int d
+		d = (1 + x * theta) / e //where does x come from?  Random number?
+
+Encrypt a message
+
+	encrypt //encrypt a message
+
+		Prompt user for message
+
+		//Loop through message one character at a time
+		Get ascii value of character
+			
+			int m = ascii value of character
+
+		int c = (m ^ e) % n  //for pow function, use loop to multiply m*m e times
+
+		//modulo = (m ^ e) - (((m ^ e) / n) * n)
+		
+		get ascii value = c
+
+		Open output file
+		
+		Print c to output file (add a space)
+
+		Close output file
+
+Decrypt a message
+
+	decrypt //decrypt a message
+
+		Open input file
+
+		//Loop through message one character at a time
+		Get ascii value of character
+		
+			int c = ascii value of character
+
+		int m = (c ^ d) % n  //for pow function, use loop to multiply c*c d times
+
+		//modulo = (c ^ d) - (((c ^ d) / n) * n)
+
+		Open output file
+
+		Print m to output file
+
+		Close output file
+
+		Close input file	
+			
+			
+
+		
+		
+
+		
+
+		
+	
+
+
+
+	
+	
+
+
