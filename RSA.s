@@ -5,9 +5,10 @@
 #Input: name - type; name - type; etc.
 #Output: name - description; etc.
 #Program Dictionary:
-#	r4:	keyVariable for P
-#	r5:	keyVariable for Q
-#	r6:
+#	r4:	keyVariableP
+#	r5:	keyVariableQ
+#	r6:	modulus
+#	r7:	theta
 
 .text
 .global main
@@ -19,25 +20,36 @@ main:
     STR r4, [sp, #4]
     STR r5, [sp, #8]
 
-    StartProgram:
+    GetInputP:
     
-    #Get user input for p and q
-    LDR r0, =prompt1
+    #Get user input for p
+    LDR r0, =promptP
     BL printf
     
     #Read, verify, and load user input
-    LDR r0, =keyVariableFormat
-    LDR r1, =keyVariable
+    LDR r0, =keyVariablePFormat
+    LDR r1, =keyVariableP
     BL scanf
 
-    LDR r4, =keyVariable
+    LDR r4, =keyVariableP
     LDR r4, [r4]			//r4 has value for keyVariable for P
 
     #Check that keyVariable for P is in correct range
-    BL checkRange
-    MOV r1, #1				//check against return value from checkRange
+    MOV r0, r4				//move value of p from r4 to r0
+    BL checkRange			//if p is in correct range, r0 = 1
+    MOV r1, #1				//move test value
+    CMP r0, r1				//compare r0 to test value
+    BNE RangeError
+	B EndProgram
 
+    RangeError:
 
+	#print error
+	LDR r0, =rangeErrorMsg
+	BL printf
+	B GetInputP
+
+    EndProgram:
 	   
     #pop the stack
     LDR lr, [sp, #0]
@@ -49,11 +61,24 @@ main:
 .data
 
     #prompt for user input
-    prompt1:	.asciz	"\nPlease enter a number between 1 and 50: "
+    promptP:	.asciz	"\nPlease enter a value for p between 1 and 50: "
 
     #format for user input
-    keyVariableFormat:	.asciz	"%d"
+    keyVariablePFormat:	.asciz	"%d"
 
     #variable for user input for p and q
-    keyVariable:	.word	0
-    
+    keyVariableP:	.word	0
+
+    #prompt for user input
+    promptQ:	.asciz	"\nPlease enter a value for q between 1 and 50: "
+
+    #format for user input
+    keyVariableQFormat:	.asciz	"%d"
+
+    #variable for user input for p and q
+    keyVariableQ:	.word	0
+
+    #error if input is invalid
+    rangeErrorMsg:	.asciz	"\nInvalid input: value is not in the specified range."
+
+   
