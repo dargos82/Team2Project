@@ -8,7 +8,7 @@
 #	r4:	keyVariableP
 #	r5:	keyVariableQ
 #	r6:	modulus
-#	r7:	theta
+#	r7:	variable value for isPrime; theta
 #	r8:	loop limit for isPrime
 #	r9:	divisor for isPrime
 
