@@ -8,7 +8,7 @@ Generate Private and Public Keys
 			print error
 			return to prompt for correct input
 
-		else if (p is not a prime number)
+		else if !(isPrime)
 
 			print error
 			return to prompt for correct input
@@ -23,7 +23,7 @@ Generate Private and Public Keys
 			print error
 			return to prompt for correct input
 
-		else if (q is not a prime number)
+		else if !(isPrime)
 
 			print error
 			return to prompt for correct input
