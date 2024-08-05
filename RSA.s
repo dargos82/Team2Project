@@ -112,6 +112,13 @@ main:
 	B GetInputQ
 
 
+    #Calculate Modulus n
+    GetN:
+    BL modulo
+
+    #Calculate Totient theta
+    GetTotient:
+
 
     EndProgram:
 	   

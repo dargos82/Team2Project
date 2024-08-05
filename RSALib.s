@@ -4,6 +4,7 @@
 .global gcd
 .global pow
 .global modulo
+.global totient
 .global cpubexp
 .global cprivexp
 .global encrypt
@@ -149,7 +150,7 @@ modulo:
     SUB sp, sp, #4
     STR lr, [sp]
   
-
+    MUL r0, r0, r1
 
     #pop stack
     LDR lr, [sp]
@@ -160,6 +161,30 @@ modulo:
 
 #END modulo
 
+
+.text
+totient:
+    #push stack
+    SUB sp, sp, #4
+    STR lr, [sp]
+
+    #(p-1)
+    SUB r2, r0, #1
+
+    #(q-1)
+    SUB r3, r1, #1
+
+    #(p-1)*(q-1)
+    MUL r0, r2, r3
+
+    #pop stack
+    LDR lr, [sp]
+    ADD sp, sp, #4
+    MOV pc, lr
+
+.data
+
+#END totient
 
 .text
 cpubexp:
