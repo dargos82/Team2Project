@@ -1,0 +1,18 @@
+# Ignore object files
+*.o
+
+# Ignore binary files
+*.bin
+
+# Ignore executables
+*.exe
+*.out
+RSA
+
+# Ignore temporary files
+*.tmp
+*.swp
+
+# Ignore build directories
+/build/
+/dist/
