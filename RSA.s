@@ -5,12 +5,14 @@
 #Input: name - type; name - type; etc.
 #Output: name - description; etc.
 #Program Dictionary:
-#	r4:	keyVariableP
-#	r5:	keyVariableQ
-#	r6:	modulus
-#	r7:	variable value for isPrime; theta
-#	r8:	loop limit for isPrime
-#	r9:	divisor for isPrime
+#	r4:	keyVariableP; numerator for modulo
+#	r5:	keyVariableQ; denominator for modulo
+#	r6:	modulus n
+#	r7:	variable value for isPrime; totient theta
+#	r8:	loop limit for isPrime; loop counter for gcd
+#	r9:	divisor for isPrime; r7 mod r8 for gcd
+#	r10:	pubKeyExp
+#	r11:	priKeyExp; r10 mod r8 for gcd
 
 .text
 .global main
@@ -46,7 +48,6 @@ main:
     MOV r1, #1				//move test value
     CMP r0, r1				//compare r0 to test value
     BNE RangeErrorP
-	//B EndProgram
 
     #Check that keyVariableP is a prime number
     MOV r0, r4				//move value of p from r4 to r0
@@ -54,7 +55,6 @@ main:
     MOV r1, #1				//move test value
     CMP r0, r1				//compare r0 to test value
     BNE PrimeErrorP
-	//B EndProgram			//comment this out to continue program
 	B GetInputQ
 
     RangeErrorP:
@@ -89,7 +89,6 @@ main:
     MOV r1, #1				//move test value
     CMP r0, r1				//compare r0 to test value
     BNE RangeErrorQ
-	//B EndProgram
 
     #Check that keyVariableQ is a prime number
     MOV r0, r5				//move value of q from r5 to r0
@@ -97,7 +96,7 @@ main:
     MOV r1, #1				//move test value
     CMP r0, r1				//compare r0 to test value
     BNE PrimeErrorQ
-	B EndProgram
+	B GetN
 
     RangeErrorQ:
 	#print error
@@ -111,13 +110,27 @@ main:
 	BL printf
 	B GetInputQ
 
-
     #Calculate Modulus n
     GetN:
-    BL modulo
+	MOV r0, r4			//move keyVariableP from r4 to r0
+	MOV r1, r5			//move keyVariableQ from r5 to r1
+		BL modulus		//modulo returned in r0
+    	MOV r6, r0			//move modulo from r0 to r6
+
+    	B GetTotient
 
     #Calculate Totient theta
     GetTotient:
+    	MOV r0, r4			//move keyVariableP from r4 to r0
+    	MOV r1, r5			//move keyVariableQ from r5 to r1
+   	BL totient			//totient returned in r0
+    	MOV r7, r0			//move totient theta from r0 to r7
+
+	B GetPublicKeyExponent
+
+    #Generate public key exponent
+    GetPublicKeyExponent:
+    BL cpubexp
 
 
     EndProgram:
@@ -158,4 +171,5 @@ main:
 
     #error if input is not a prime number
     primeErrorMsg:	.asciz	"\nInvalid input: value must be a prime number."
-   
+
+  
