@@ -312,7 +312,11 @@ cpubexp:
 	    MOV r0, r7			//move totient theta to r0
 	    MOV r1, r10			//move exponent to r1
 	    BL gcd			//determine if theta and exponent are co-prime
-					//if they are co-prime, r0 = 0
+	   				//if they are co-prime, r0 = 0
+	    LDR r0, =validExpMsg
+	    MOV r1, r10
+	    BL printf
+	    B EndCPubExp	
 
     ExpError:
 	LDR r0, =expErrorMsg
@@ -339,6 +343,9 @@ cpubexp:
 
     #error message if public key exponent value not valid
     expErrorMsg:	.asciz	"\nInvalid input.  Number is not in the specified range."
+
+    #message for valid exponent
+    validExpMsg:	.asciz	"\n%d is a valid public key exponent."
 
 #END cbpuexp
 
