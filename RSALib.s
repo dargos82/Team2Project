@@ -317,16 +317,16 @@ cpubexp:
 
    	MOV r1, r7			//move totient theta from r7 to r1
     	MOV r3, #0
-   	CMP r0, r1			//compare exponent to theta
-    	ADDLE r3, r3, #1		//if r0 <= totient theta, r3 = 1
+   	CMP r0, r1			//compare exponent to phi
+    	ADDLE r3, r3, #1		//if r0 <= totient phi, r3 = 1
 
     	AND r0, r2, r3		//if r2 = 1 AND r3 = 1, r0 = 1 (number in range) 
     	MOV r1, #1
 	CMP r0, r1
     	BNE ExpErrorRange
-	    MOV r0, r7			//move totient theta to r0
+	    MOV r0, r7			//move totient phi to r0
 	    MOV r1, r10			//move exponent to r1
-	    BL gcd			//determine if theta and exponent are co-prime
+	    BL gcd			//determine if phi and exponent are co-prime
 	   				//if they are co-prime, r0 = 0
 
 	MOV r1, #0
