@@ -315,7 +315,7 @@ cpubexp:
     	CMP r0, r1			//compare exponent to 1
     	ADDGE r2, r2, #1		//if r0 >= 1, r2 = 1
 
-   	MOV r1, r7			//move totient theta from r7 to r1
+   	MOV r1, r7			//move totient phi from r7 to r1
     	MOV r3, #0
    	CMP r0, r1			//compare exponent to phi
     	ADDLE r3, r3, #1		//if r0 <= totient phi, r3 = 1
