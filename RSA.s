@@ -142,7 +142,7 @@ main:
 
     #Generate public key exponent
     GetPublicKeyExponent:
-    BL cpubexp
+    BL cpubexp				//r10 = valid public key exponent
 
     #Generate private key exponent
 
