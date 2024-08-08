@@ -109,17 +109,23 @@ isPrime:
 .text
 gcd:
 
-    #Purpose: Determine if theta and exponent are co-prime or not
+    #Purpose: Determine if phi and exponent are co-prime or not;
+    #r0 = 0 if co-prime; r0 = 1 if not co-prime
     #Program dictionary:
-    #r7:	totient theta
+    #r7:	totient phi
     #r8:	loop counter
     #r9:	r7 mod r8
     #r10:	exponent
     #r11:	r10 mod r8
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #24
     STR lr, [sp]
+    STR r7, [sp, #4]
+    STR r8, [sp, #8]
+    STR r9, [sp, #12]
+    STR r10, [sp, #16]
+    STR r11, [sp, #20]
  
     #r0 = totient theta; r1 = public key exponent (this is smaller than totient theta)
     
@@ -149,26 +155,31 @@ gcd:
 	MOV r1, #0
 	MOV r2, #0
 	MOV r3, #0
-	CMP r1, r9
-	ADDEQ r2, #1
-	CMP r1, r11
-	ADDEQ r3, #1
+	CMP r1, r9			//compare r7 mod r8 to 0
+	ADDEQ r2, #1			//if mod != 0, r2 = 1
+	CMP r1, r11			//compare r11 mod r8 to 0
+	ADDEQ r3, #1			//if mod != 0, r3 = 1
 
-	AND r0, r2, r3			//r0 = 1 if r7 AND r10 have common denominator
+	AND r0, r2, r3			//if r0 = 1, r7 and r10 have common denominator > 1 
 
 	MOV r1, #1
 	CMP r0, r1
 
 	#Get next value
 	SUB r8, r8, #1
-	BNE StartLoop			//if r0 != 1, not a common denominator, restart loop
+	BNE StartLoop			//if r0 = 0, not a common denominator, restart loop for next test
 	    B EndGCD			//Branch to end, r0 = 1 and they have a common denominator > 1
 
     EndGCD:
 	   
     #pop the stack
     LDR lr, [sp, #0]
-    ADD sp, sp, #4
+    LDR r7, [sp, #4]
+    LDR r8, [sp, #8]
+    LDR r9, [sp, #12]
+    LDR r10, [sp, #16]
+    LDR r11, [sp, #20]
+    ADD sp, sp, #24
     MOV pc, lr
 
 .data
@@ -272,7 +283,7 @@ totient:
 cpubexp:
 #Purpose: prompts user for e and checks it against set parameters
 #Program dictionary:
-#r7:	totient theta
+#r7:	totient phi
 #r10:	pubKeyExp
 
     #push stack
@@ -281,8 +292,13 @@ cpubexp:
 
     GetPubKeyExp:
   
+        MOV r0, r7
+        MOV r1, #10
+        BL __aeabi_idiv
+        MOV r1, r0
+
     	LDR r0, =pubKeyExpPrompt
-   	MOV r1, r7
+   	//MOV r1, r7
    	BL printf
     
    	LDR r0, =pubKeyExpFormat
@@ -307,19 +323,29 @@ cpubexp:
     	AND r0, r2, r3		//if r2 = 1 AND r3 = 1, r0 = 1 (number in range) 
     	MOV r1, #1
 	CMP r0, r1
-    	BNE ExpError
-	    //B End
+    	BNE ExpErrorRange
 	    MOV r0, r7			//move totient theta to r0
 	    MOV r1, r10			//move exponent to r1
 	    BL gcd			//determine if theta and exponent are co-prime
 	   				//if they are co-prime, r0 = 0
+
+	MOV r1, #0
+	CMP r0, r1
+
+	BNE ExpErrorCoPrime
 	    LDR r0, =validExpMsg
 	    MOV r1, r10
 	    BL printf
-	    B EndCPubExp	
+	    B EndCPubExp
 
-    ExpError:
-	LDR r0, =expErrorMsg
+    ExpErrorRange:
+	LDR r0, =expErrorRangeMsg
+	BL printf
+	B GetPubKeyExp
+
+    ExpErrorCoPrime:
+	LDR r0, =expErrorCoPrimeMsg
+        MOV r1, r7
 	BL printf
 	B GetPubKeyExp
    
@@ -342,10 +368,13 @@ cpubexp:
     pubKeyExp:	.word	0
 
     #error message if public key exponent value not valid
-    expErrorMsg:	.asciz	"\nInvalid input.  Number is not in the specified range."
+    expErrorRangeMsg:	.asciz	"\nInvalid input.  Number is not in the specified range.\n"
 
     #message for valid exponent
-    validExpMsg:	.asciz	"\n%d is a valid public key exponent."
+    validExpMsg:	.asciz	"\n%d is a valid public key exponent.\n"
+
+    #error message if exponent is not co-prime to phi
+    expErrorCoPrimeMsg:	.asciz	"\nInvalid input.  Number is not co-prime to %d.\n"
 
 #END cbpuexp
 
