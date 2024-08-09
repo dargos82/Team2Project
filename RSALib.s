@@ -512,9 +512,9 @@ encrypt:
     STR r5, [sp, #8]
     STR r6, [sp, #12]
 
-    MOV r4, r0          // move clear-text character to R0
-    MOV r5, r1          // move pubKeyExp to R1
-    MOV r6, r2          // move modulus N to R2
+    MOV r4, r0          // move clear-text character to R4
+    MOV r5, r1          // move pubKeyExp to R5
+    MOV r6, r2          // move modulus N to R6
   
     #c = (m^e) % n
     #Calculate m to the power of e
@@ -543,22 +543,32 @@ encrypt:
 decrypt:
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #16
     STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
+
+    MOV r4, r0          // move encrypted character to R4
+    MOV r5, r1          // move pubKeyExp to R5
+    MOV r6, r2          // move modulus N to R6
   
     #m = (c^d) % n
     #Calculate c to the power of d
     BL pow
 
     #Move n from r2 to r1
-    MOV r1, r2
+    MOV r1, r6
 
     #Calculate Modulo, r0 % r1, result is m
     BL modulo
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    ADD sp, sp, #16
     MOV pc, lr    
 
 .data
