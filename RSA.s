@@ -343,7 +343,7 @@ encrypt_message:
     outputEncryptedFileFormat: .asciz "Encrypted content is written to file [ 'encrypted.txt' ]\n"
     outputNextLineFormat: .asciz "\n"
 
-    writeFileContentFormat: .asciz "%c"
+    writeFileContentFormat: .asciz "%d"
 
     errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
     file_content: .word 0
