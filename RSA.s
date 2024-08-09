@@ -316,6 +316,9 @@ encrypt_message:
     LDR r0, =outputNextLineFormat
     BL printf
 
+    LDR r0, =outputEncryptedFileFormat
+    BL printf
+
     # Pop from stack
     LDR lr, [sp]
     LDR r4, [sp, #4]
@@ -328,8 +331,9 @@ encrypt_message:
     inputFormat: .asciz "%s"
     input_file: .space 50
 
-    outputFileFormat: .asciz "Content of the file [%s] is: "
+    outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
     outputFileContentFormat: .asciz "%c"
+    outputEncryptedFileFormat: .asciz "Encrypted content is written to file [ 'encrypted.txt' ]"
     outputNextLineFormat: .asciz "\n"
 
     writeFileContentFormat: .asciz "%c"
