@@ -146,7 +146,7 @@ main:
     MOV r10, r0             // move public key exp to r10
 
     LDR r0, =pubKeyExp
-    LDR r1, r10
+    MOV r1, r10
     BL printf
 
     #Generate private key exponent
@@ -156,7 +156,7 @@ main:
     MOV r11, r0             // move private key exp to r11
 
     LDR r0, =privKeyExp
-    LDR r1, r11
+    MOV r1, r11
     BL printf
     
     #Encrypt a message
