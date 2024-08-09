@@ -354,11 +354,11 @@ encrypt_message:
 .text
 print_line_separator:
     # Push to the stack
-    SUB sp, sp, #8
+    SUB sp, sp, #4
     STR lr, [sp, #0]
-    STR r1, [sp, #4]
 
-    MOV r1, #0
+    LDR r1, =loop_counter
+    LDR r1, [r1]
 
     LDR r0, =outputNextLine
     BL printf
@@ -369,7 +369,11 @@ print_line_separator:
             LDR r0, =outputLineSeparator
             BL printf
 
+            LDR r1, =loop_counter
+            LDR r1, [r1]
             ADD r1, r1, #1
+            LDR r3, =loop_counter
+            STR r1, [r3]
             B startLoop
     endLoop:
 
@@ -378,13 +382,13 @@ print_line_separator:
 
     # Pop from stack and return
     LDR lr, [sp, #0]
-    LDR r1, [sp, #4]
-    ADD sp, sp, #8
+    ADD sp, sp, #4
     MOV pc, lr
 
 .data
     outputLineSeparator: .asciz "-"
     outputNextLine: .asciz "\n"
+    loop_counter: .word 1
 
 # END main 
 # ----------------------------------------------------------------------------------
