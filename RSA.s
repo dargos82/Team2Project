@@ -369,6 +369,7 @@ print_line_separator:
             BL printf
 
             ADD r1, r1, #1
+            B startLoop
     endLoop:
 
     LDR r0, =outputNextLine
