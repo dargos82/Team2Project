@@ -126,10 +126,10 @@ main:
 
 
     # Calculate Modulus n
-    # MOV r0, r4			//move keyVariableP from r4 to r0
-    # MOV r1, r5			//move keyVariableQ from r5 to r1
-    # BL modulus		    //modulo returned in r0
-    # MOV r6, r0			//move modulo from r0 to r6
+    MOV r0, r4			//move keyVariableP from r4 to r0
+    MOV r1, r5			//move keyVariableQ from r5 to r1
+    BL modulus		    //modulo returned in r0
+    MOV r6, r0			//move modulo from r0 to r6
 
     # Calculate Totient theta
     MOV r0, r4			//move keyVariableP from r4 to r0
@@ -207,5 +207,141 @@ main:
     pubKeyExp: .asciz "\nPublic Key Exponent: %d\n"
 
     privKeyExp: .asciz "\nPrivate Key Exponent: %d\n"
+
+# END main
+
+# ----------------------------------------------------------------------------------
+# Purpose: To encrypt a clear text file
+#   We will use encrypt functionn to encrypt contents in clear text file.
+#   
+#   Input : public key exponent (r0), modulus N (r1)
+#   Output: None
+
+.text
+encrypt_message:
+
+    # Program dictionary
+    # r4 - public key exponent
+    # r5 - modulus N
+
+    # Push to the stack
+    SUB sp, sp, #12
+    STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+
+    # Store input pubKeyExp into R4
+    MOV r4, r0
+    # Store input modulus N into R5
+    MOV r5, r1
+
+    LDR r0, =promptFile
+    BL printf
+
+    LDR r0, =inputFormat
+    LDR r1, =input_file
+    BL scanf
+
+    LDR r0, =input_file
+    LDR r1, =file_read_mode
+    BL fopen
+
+    LDR r1, =file_read_pointer
+    STR r0, [r1]
+    MOV r1, #0
+    CMP r0, r1
+    BEQ invalid_file
+
+        LDR r0, =outputFileFormat
+        LDR r1, =input_file
+        BL printf
+
+        # Initialize write file pointer
+        LDR r0, =output_file_name
+        LDR r1, =file_write_mode
+        BL fopen
+        LDR r1, =file_write_pointer
+        STR r0, [r1]
+
+    read_loop:
+        MOV r1, #-1
+        LDR r0, =file_read_pointer
+        LDR r0, [r0]
+        BL fgetc
+        CMP r0, r1
+        BEQ end_read_loop
+
+            LDR r1, =file_content
+            STR r0, [r1]
+
+            # Process file content character by character
+            # Logic to encrypt character goes here
+            # ........
+            # ........
+
+            LDR r0, =file_write_pointer
+            LDR r0, [r0]
+            LDR r1, =writeFileContentFormat
+            LDR r2, =file_content
+            LDR r2, [r2]
+            BL fprintf
+
+            LDR r1, =file_content
+            LDR r1, [r1]
+            LDR r0, =outputFileContentFormat
+            BL printf
+
+            B read_loop
+        
+    end_read_loop:
+        B close_file
+
+    close_file:
+        LDR r0, =file_read_pointer
+        LDR r0, [r0]
+        BL fclose
+        LDR r0, =file_write_pointer
+        LDR r0, [r0]
+        BL fclose
+        B done
+
+    invalid_file:
+        LDR r0, =errorInvalidFile
+        BL printf
+
+    done:
+
+    LDR r0, =outputNextLineFormat
+    BL printf
+
+    # Pop from stack
+    LDR lr, [sp]
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
+    MOV pc, lr
+
+.data
+    promptFile: .asciz "Enter a clear-text file path to encrypt: "
+    inputFormat: .asciz "%s"
+    input_file: .space 50
+
+    outputFileFormat: .asciz "Content of the file [%s] is: "
+    outputFileContentFormat: .asciz "%c"
+    outputNextLineFormat: .asciz "\n"
+
+    writeFileContentFormat: .asciz "%c"
+
+    errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
+    file_content: .space 40
+
+    file_read_pointer: .word 0
+    file_write_pointer: .word 0
+    file_read_mode: .asciz  "r"
+    file_write_mode: .asciz  "w"
+    output_file_name: .asciz "encrypted.txt"
+
+# END encrypt_message
+# ----------------------------------------------------------------------------------
 
   
