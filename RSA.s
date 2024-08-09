@@ -396,6 +396,7 @@ decrypt_message:
 
         LDR r0, =decrypt_outputFileFormat
         LDR r1, =decrypt_input_file
+        LDR r1, [r1]
         BL printf
 
         # Initialize write file pointer
