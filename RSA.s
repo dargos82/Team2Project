@@ -447,9 +447,9 @@ decrypt_message:
         LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
         BL fclose
-        LDR r0, =decrypt_file_write_pointer
-        LDR r0, [r0]
-        BL fclose
+        #LDR r0, =decrypt_file_write_pointer
+        #LDR r0, [r0]
+        #BL fclose
         B decrypt_done
 
     decrypt_invalid_file:
