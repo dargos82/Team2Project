@@ -422,19 +422,17 @@ decrypt_message:
             LDR r0, =encrypted_file_content
             LDR r0, [r0]
 
-            LDR r1, =decrypt_file_content
-            STR r0, [r1]
+            MOV r1, r4
+            MOV r2, r5
 
             # Process file content character by character
-            # Logic to decrypt character goes here
-            # ........
-            # ........
+            # Logic to encrypt character goes here
+            BL decrypt
+            MOV r2, r0
 
             LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
             LDR r1, =decrypt_writeFileContentFormat
-            LDR r2, =decrypt_file_content
-            LDR r2, [r2]
             BL fprintf
 
             LDR r1, =decrypt_file_content
