@@ -478,7 +478,7 @@ decrypt_message:
 
     decrypt_outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
     decrypt_readFileContentFormat: .asciz "%d"
-    decrypt_outputFileContentFormat: .asciz "%d"
+    decrypt_outputFileContentFormat: .asciz "%d "
     decrypt_outputDecryptedFileFormat: .asciz "Decrypted content is written to file [ 'decrypted.txt' ]\n"
     decrypt_outputNextLineFormat: .asciz "\n"
 
