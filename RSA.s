@@ -32,116 +32,112 @@ main:
 
     GetInputP:
     
-    #Get user input for p
-    LDR r0, =promptP
-    BL printf
-    
-    #Read, verify, and load user input
-    LDR r0, =keyVariablePFormat
-    LDR r1, =keyVariableP
-    BL scanf
+        #Get user input for P
+        LDR r0, =promptP
+        BL printf
+        
+        #Read, verify, and load user input
+        LDR r0, =keyVariablePFormat
+        LDR r1, =keyVariableP
+        BL scanf
 
-    LDR r4, =keyVariableP
-    LDR r4, [r4]			//r4 has value for keyVariable for P
+        LDR r4, =keyVariableP
+        LDR r4, [r4]			//r4 has value for keyVariable for P
 
-    #Check that keyVariableP is in correct range
-    MOV r0, r4				//move value of p from r4 to r0
-    BL checkRange			//if p is in correct range, r0 = 1
-    MOV r1, #1				//move test value
-    CMP r0, r1				//compare r0 to test value
-    BNE RangeErrorP
+        #Check that keyVariableP is in correct range
+        MOV r0, r4				//move value of p from r4 to r0
+        BL checkRange			//if p is in correct range, r0 = 1
+        MOV r1, #1				//move test value
+        CMP r0, r1				//compare r0 to test value
+        BNE RangeErrorP
 
-    #Check that keyVariableP is a prime number
-    MOV r0, r4				//move value of p from r4 to r0
-    BL isPrime				//if p is a prime number, r0 = 1
-    MOV r1, #1				//move test value
-    CMP r0, r1				//compare r0 to test value
-    BNE PrimeErrorP
-	B GetInputQ
+            #Check that keyVariableP is a prime number
+            MOV r0, r4				//move value of p from r4 to r0
+            BL isPrime				//if p is a prime number, r0 = 1
+            MOV r1, #1				//move test value
+            CMP r0, r1				//compare r0 to test value
+            BNE PrimeErrorP
+                B GetInputQ
 
     RangeErrorP:
-	#print error
-	LDR r0, =rangeErrorMsg
-	BL printf
-	B GetInputP
+        #print error
+        LDR r0, =rangeErrorMsg
+        BL printf
+        B GetInputP
 
     PrimeErrorP:
-	#print error
-	LDR r0, =primeErrorMsg
-	BL printf
-	B GetInputP
+        #print error
+        LDR r0, =primeErrorMsg
+        BL printf
+        B GetInputP
 
     GetInputQ:
     
-    #Get user input for q
-    LDR r0, =promptQ
-    BL printf
-    
-    #Read, verify, and load user input
-    LDR r0, =keyVariableQFormat
-    LDR r1, =keyVariableQ
-    BL scanf
+        #Get user input for q
+        LDR r0, =promptQ
+        BL printf
+        
+        #Read, verify, and load user input
+        LDR r0, =keyVariableQFormat
+        LDR r1, =keyVariableQ
+        BL scanf
 
-    LDR r5, =keyVariableQ
-    LDR r5, [r5]			//r5 has value for keyVariableQ
+        LDR r5, =keyVariableQ
+        LDR r5, [r5]			//r5 has value for keyVariableQ
 
-    #Check that keyVariableP != keyVariableQ
-    CMP r4, r5
-    BEQ EqualError
+        #Check that keyVariableP != keyVariableQ
+        CMP r4, r5
+        BEQ EqualError
 
-    #Check that keyVariableQ is in correct range
-    MOV r0, r5				//move value of q from r5 to r0
-    BL checkRange			//if q is in correct range, r0 = 1
-    MOV r1, #1				//move test value
-    CMP r0, r1				//compare r0 to test value
-    BNE RangeErrorQ
+        #Check that keyVariableQ is in correct range
+        MOV r0, r5				//move value of q from r5 to r0
+        BL checkRange			//if q is in correct range, r0 = 1
+        MOV r1, #1				//move test value
+        CMP r0, r1				//compare r0 to test value
+        BNE RangeErrorQ
 
-    #Check that keyVariableQ is a prime number
-    MOV r0, r5				//move value of q from r5 to r0
-    BL isPrime				//if q is a prime number, r0 = 1
-    MOV r1, #1				//move test value
-    CMP r0, r1				//compare r0 to test value
-    BNE PrimeErrorQ
-	B GetN
+        #Check that keyVariableQ is a prime number
+        MOV r0, r5				//move value of q from r5 to r0
+        BL isPrime				//if q is a prime number, r0 = 1
+        MOV r1, #1				//move test value
+        CMP r0, r1				//compare r0 to test value
+        BNE PrimeErrorQ
+            B InputPQDone
 
     RangeErrorQ:
-	#print error
-	LDR r0, =rangeErrorMsg
-	BL printf
-	B GetInputQ
+        #print error
+        LDR r0, =rangeErrorMsg
+        BL printf
+        B GetInputQ
 
     PrimeErrorQ:
-	#print error
-	LDR r0, =primeErrorMsg
-	BL printf
-	B GetInputQ
+        #print error
+        LDR r0, =primeErrorMsg
+        BL printf
+        B GetInputQ
 
     EqualError:
-	#print error
-	LDR r0, =equalErrorMsg
-	BL printf
-	B GetInputQ
+        #print error
+        LDR r0, =equalErrorMsg
+        BL printf
+        B GetInputQ
+    
+    InputPQDone:
 
-    #Calculate Modulus n
-    GetN:
-	MOV r0, r4			//move keyVariableP from r4 to r0
-	MOV r1, r5			//move keyVariableQ from r5 to r1
-		BL modulus		//modulo returned in r0
-    	MOV r6, r0			//move modulo from r0 to r6
 
-    	B GetTotient
+    # Calculate Modulus n
+    # MOV r0, r4			//move keyVariableP from r4 to r0
+    # MOV r1, r5			//move keyVariableQ from r5 to r1
+    # BL modulus		    //modulo returned in r0
+    # MOV r6, r0			//move modulo from r0 to r6
 
-    #Calculate Totient theta
-    GetTotient:
-    	MOV r0, r4			//move keyVariableP from r4 to r0
-    	MOV r1, r5			//move keyVariableQ from r5 to r1
-   	    BL totient			//totient returned in r0
-    	MOV r7, r0			//move totient phi from r0 to r7
+    # Calculate Totient theta
+    MOV r0, r4			//move keyVariableP from r4 to r0
+    MOV r1, r5			//move keyVariableQ from r5 to r1
+    BL totient			//totient returned in r0
+    MOV r7, r0			//move totient phi from r0 to r7
 
-	B GetPublicKeyExponent
-
-    #Generate public key exponent
-    GetPublicKeyExponent:
+    # Generate public key exponent
     BL cpubexp				//r10 = valid public key exponent
     MOV r10, r0             // move public key exp to r10
 
@@ -149,7 +145,7 @@ main:
     MOV r1, r10
     BL printf
 
-    #Generate private key exponent
+    # Generate private key exponent
     MOV r0, r7              // move totient to r0
     MOV r1, #5              // move pubKeyExp to r1
     BL cprivexp
@@ -159,14 +155,14 @@ main:
     MOV r1, r11
     BL printf
     
-    #Encrypt a message
+    # Encrypt a message
 
 
-    #Decrypt a message
+    # Decrypt a message
 
     EndProgram:
 	   
-    #pop the stack
+    # pop the stack
     LDR lr, [sp, #0]
     LDR r4, [sp, #4]
     LDR r5, [sp, #8]
