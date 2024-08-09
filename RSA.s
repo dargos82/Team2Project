@@ -279,16 +279,20 @@ encrypt_message:
             LDR r1, =file_content
             STR r0, [r1]
 
+            LDR r1, =file_content
+            LDR r1, [r1]
+            MOV r0, r1
+            MOV r1, r4
+            MOV r2, r5
+
             # Process file content character by character
             # Logic to encrypt character goes here
-            # ........
-            # ........
+            BL encrypt
+            MOV r2, r0
 
             LDR r0, =file_write_pointer
             LDR r0, [r0]
             LDR r1, =writeFileContentFormat
-            LDR r2, =file_content
-            LDR r2, [r2]
             BL fprintf
 
             LDR r1, =file_content
