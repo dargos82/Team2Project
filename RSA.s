@@ -413,11 +413,11 @@ decrypt_message:
         
         BL fscanf
 
-        LDR r0, =encrypted_file_content
-        LDR r0, [r0]
-
         CMP r0, #1
         BNE end_decryption_read_loop
+
+            LDR r0, =encrypted_file_content
+            LDR r0, [r0]
 
             LDR r1, =decrypt_file_content
             STR r0, [r1]
