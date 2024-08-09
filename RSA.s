@@ -161,6 +161,9 @@ main:
     BL encrypt_message
 
     # Decrypt a message
+    MOV r0, r11             // move privKeyExp to r0
+    MOV r1, r6              // move modulus N to r1
+    BL decrypt_message
 
     EndProgram:
 	   
@@ -252,8 +255,7 @@ encrypt_message:
 
     LDR r1, =file_read_pointer
     STR r0, [r1]
-    MOV r1, #0
-    CMP r0, r1
+    CMP r0, #0
     BEQ invalid_file
 
         LDR r0, =outputFileFormat
@@ -268,11 +270,10 @@ encrypt_message:
         STR r0, [r1]
 
     read_loop:
-        MOV r1, #-1
         LDR r0, =file_read_pointer
         LDR r0, [r0]
         BL fgetc
-        CMP r0, r1
+        CMP r0, #-1
         BEQ end_read_loop
 
             LDR r1, =file_content
@@ -348,6 +349,145 @@ encrypt_message:
     file_read_mode: .asciz  "r"
     file_write_mode: .asciz  "w"
     output_file_name: .asciz "encrypted.txt"
+
+# END encrypt_message
+# ----------------------------------------------------------------------------------
+# Purpose: To decrypt an encrypted file
+#   We will use decrypt functionn to decrypt contents in encrypted file.
+#   
+#   Input : private key exponent (r0), modulus N (r1)
+#   Output: None
+
+.text
+decrypt_message:
+
+    # Program dictionary
+    # r4 - private key exponent
+    # r5 - modulus N
+
+    # Push to the stack
+    SUB sp, sp, #12
+    STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+
+    # Store input privKeyExp into R4
+    MOV r4, r0
+    # Store input modulus N into R5
+    MOV r5, r1
+
+    BL print_line_separator
+
+    LDR r0, =promptFile
+    BL printf
+
+    LDR r0, =inputFormat
+    LDR r1, =input_file
+    BL scanf
+
+    LDR r0, =input_file
+    LDR r1, =file_read_mode
+    BL fopen
+
+    LDR r1, =file_read_pointer
+    STR r0, [r1]
+    CMP r0, #0
+    BEQ invalid_file
+
+        LDR r0, =outputFileFormat
+        LDR r1, =input_file
+        BL printf
+
+        # Initialize write file pointer
+        LDR r0, =output_file_name
+        LDR r1, =file_write_mode
+        BL fopen
+        LDR r1, =file_write_pointer
+        STR r0, [r1]
+
+    read_loop:
+        LDR r0, =file_read_pointer
+        LDR r0, [r0]
+        LDR r1, =readFileContentFormat
+        LDR r1, [r1]
+        BL fscanf
+        CMP r0, #-1
+        BEQ end_read_loop
+
+            LDR r1, =file_content
+            STR r0, [r1]
+
+            # Process file content character by character
+            # Logic to decrypt character goes here
+            # ........
+            # ........
+
+            LDR r0, =file_write_pointer
+            LDR r0, [r0]
+            LDR r1, =writeFileContentFormat
+            LDR r2, =file_content
+            LDR r2, [r2]
+            BL fprintf
+
+            LDR r1, =file_content
+            LDR r1, [r1]
+            LDR r0, =outputFileContentFormat
+            BL printf
+
+            B read_loop
+        
+    end_read_loop:
+        B close_file
+
+    close_file:
+        LDR r0, =file_read_pointer
+        LDR r0, [r0]
+        BL fclose
+        LDR r0, =file_write_pointer
+        LDR r0, [r0]
+        BL fclose
+        B done
+
+    invalid_file:
+        LDR r0, =errorInvalidFile
+        BL printf
+
+    done:
+
+    LDR r0, =outputNextLineFormat
+    BL printf
+
+    LDR r0, =outputEncryptedFileFormat
+    BL printf
+
+    # Pop from stack
+    LDR lr, [sp]
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
+    MOV pc, lr
+
+.data
+    promptFile: .asciz "\nEnter a encrypted file path to decrypt: "
+    inputFormat: .asciz "%s"
+    input_file: .space 50
+
+    outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
+    readFileContentFormat: .asciz "%d"
+    outputFileContentFormat: .asciz "%c"
+    outputEncryptedFileFormat: .asciz "Decrypted content is written to file [ 'decrypted.txt' ]\n"
+    outputNextLineFormat: .asciz "\n"
+
+    writeFileContentFormat: .asciz "%c"
+
+    errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
+    file_content: .space 40
+
+    file_read_pointer: .word 0
+    file_write_pointer: .word 0
+    file_read_mode: .asciz  "r"
+    file_write_mode: .asciz  "w"
+    output_file_name: .asciz "decrypted.txt"
 
 # END encrypt_message
 # ----------------------------------------------------------------------------------
