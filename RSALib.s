@@ -425,7 +425,8 @@ cprivexp:
             LDR r2, =x_loop_counter
             LDR r2, [r2]
             ADD r2, r2, #1
-            STR r2, [r2]
+            LDR r3, =x_loop_counter
+            STR r2, [r3]
             B startLoop
 
     endLoop:
