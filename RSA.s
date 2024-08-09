@@ -208,8 +208,8 @@ main:
     #error if p and q are equal
     equalErrorMsg:	.asciz	"\nInvalid input: p and q cannot be equal.\n"
 
-    pubKeyExp: .asciz "\n Public Key Exponent: %d\n"
+    pubKeyExp: .asciz "\nPublic Key Exponent: %d\n"
 
-    privKeyExp: .asciz "\n Private Key Exponent: %d\n"
+    privKeyExp: .asciz "\nPrivate Key Exponent: %d\n"
 
   
