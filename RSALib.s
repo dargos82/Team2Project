@@ -215,8 +215,10 @@ pow:
 modulo:
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #12
     STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
   
     #x mod y = x - ((x/y) * y)
     MOV r4, r0			//move r0 to r4
@@ -227,7 +229,9 @@ modulo:
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
     MOV pc, lr    
 
 .data
