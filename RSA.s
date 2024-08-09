@@ -394,10 +394,9 @@ decrypt_message:
     CMP r0, #0
     BEQ decrypt_invalid_file
 
-        LDR r0, =decrypt_outputFileFormat
-        LDR r1, =decrypt_input_file
-        LDR r1, [r1]
-        BL printf
+        #LDR r0, =decrypt_outputFileFormat
+        #LDR r1, =decrypt_input_file
+        #BL printf
 
         # Initialize write file pointer
         #LDR r0, =decrypt_output_file_name
