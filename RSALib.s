@@ -381,19 +381,81 @@ cpubexp:
 
 .text
 cprivexp:
+# Purpose: compute private key exponent from totient and pubKeyExp
+#   This function will return a private key exponent for valid totient and pubKeyExp
+#   Return -1, if private key exponent can't be computed
+#
+# Program dictionary:
+# r4:	totient phi(n)
+# r5:	pubKeyExp
 
-    #push stack
-    SUB sp, sp, #4
+    # Push to the stack
+    SUB sp, sp, #12
     STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
   
+    # Store input totient in R0 into R4
+    MOV r4, r0
+    # Store input pubKeyExp in R1 into R5
+    MOV r5, r1
 
+    # Initialize R0 with 1 to compute X in solve following equation
+    # (1 + x * totient) / e
+    MOV r2, #1
 
-    #pop stack
+    startLoop:
+
+        CMP R2, R4
+        BGT x_not_found
+
+        MUL r0, r2, r4      // x * totient
+        ADD r0, r0, #1      // 1 + (x * totient)
+
+        MOV r1, r5
+        BL modulo
+
+        # If modulo function returns 0, then X is valid
+        # else increment X and continue
+        CMP r0, #0
+        BEQ endLoop
+
+            # Increment X
+            ADD r2, r2, #1
+            B startLoop
+
+    endLoop:
+
+    # Compute privateKeyExp using following formula
+    # R2 will hold the valid X for computing privateKeyExp
+    # (1 + x * totient) / e
+
+    MUL r0, r2, r4      // x * totient
+    ADD r0, r0, #1      // 1 + (x * totient)
+    MOV r1, r5          // move pubKeyExp e to r1
+
+    BL __aeabi_idiv
+    B done
+
+    x_not_found:
+        LDR r0, =xNotFoundMsg
+        BL printf
+
+        # return -1 If X can't be computed
+        MOV r0, #-1
+
+    done:
+
+    # Pop from stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
     MOV pc, lr    
 
 .data
+    #error message if x value is not found
+    xNotFoundMsg:	.asciz	"\nUnable to compute private key exponent.\n"
 
 #END cprivexp
 

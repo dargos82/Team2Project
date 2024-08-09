@@ -143,9 +143,21 @@ main:
     #Generate public key exponent
     GetPublicKeyExponent:
     BL cpubexp				//r10 = valid public key exponent
+    MOV r10, r0             // move public key exp to r10
+
+    LDR r0, =pubKeyExp
+    LDR r1, r10
+    BL printf
 
     #Generate private key exponent
+    MOV r0, r7
+    MOV r1, r10
+    BL cprivexp
+    MOV r11, r0             // move private key exp to r11
 
+    LDR r0, =privKeyExp
+    LDR r1, r11
+    BL printf
     
     #Encrypt a message
 
@@ -195,5 +207,9 @@ main:
 
     #error if p and q are equal
     equalErrorMsg:	.asciz	"\nInvalid input: p and q cannot be equal.\n"
+
+    pubKeyExp: .asciz "\n Public Key Exponent: %d\n"
+
+    privKeyExp: .asciz "\n Private Key Exponent: %d\n"
 
   
