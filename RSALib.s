@@ -512,9 +512,9 @@ encrypt:
     STR r5, [sp, #8]
     STR r6, [sp, #12]
 
-    MOV r0, r4          // move clear-text character to R0
-    MOV r1, r5          // move pubKeyExp to R1
-    MOV r2, r6          // move modulus N to R2
+    MOV r4, r0          // move clear-text character to R0
+    MOV r5, r1          // move pubKeyExp to R1
+    MOV r6, r2          // move modulus N to R2
   
     #c = (m^e) % n
     #Calculate m to the power of e
