@@ -354,8 +354,9 @@ encrypt_message:
 .text
 print_line_separator:
     # Push to the stack
-    SUB sp, sp, #4
+    SUB sp, sp, #8
     STR lr, [sp, #0]
+    STR r1, [sp, #4]
 
     MOV r1, #0
 
@@ -377,7 +378,8 @@ print_line_separator:
 
     # Pop from stack and return
     LDR lr, [sp, #0]
-    ADD sp, sp, #4
+    LDR r1, [sp, #4]
+    ADD sp, sp, #8
     MOV pc, lr
 
 .data
