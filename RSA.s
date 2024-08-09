@@ -142,15 +142,108 @@ main:
 
     #Generate public key exponent
     GetPublicKeyExponent:
-    BL cpubexp				//r10 = valid public key exponent
+        BL cpubexp			//r10 = valid public key exponent
+        MOV r10, r0			// move public key exp to r10
 
     #Generate private key exponent
 
+
+    #Prompt User with options to Encrypt, Decrypt, or Exit
+    
     
     #Encrypt a message
+    GetInputEM:
 
+        #Get user input for Message to Encrypt
+        LDR r0, =promptEM
+        BL printf
+
+        #Read, verify, and load user input
+        LDR r0, =encryptionMessageFormat
+        LDR r1, =encryptionMessage
+        BL scanf
+
+        LDR r4, =encryptionMessage
+        LDR r4, [r4]			//r4 has value for encryptionMessage
+
+        #Open output file (encrypted.txt)
+        LDR r0, =encryptFile
+        LDR r1, =fileWrite
+        BL fopen
+        MOV r9, r0			//move file pointer, r0, into r9
+
+        #Loop through message one character at a time
+        StartEncryptLoop:
+            #Get ASCII value of character from user input
+            LDRB r0, [r4], #1		//move m (character in message) into r0
+
+            #Check if end of string
+            CMP r0, #0
+            BEQ EndEncryptLoop
+
+            #Calculate cypher value, c, using Encrypt Function
+            MOV r1, r10			//move e (public key exponent) from r10 to r1
+            MOV r2, r6                  //move n (calculated modulus) from r6 to r2
+            BL encrypt			//c is now in r0
+
+            #write c (add space) to output file
+            MOV r1, r9
+            BL fprintf
+
+            #Restart Loop for next character
+            B StartEncryptLoop
+
+        EndEncryptLoop:
+
+        #Close output file (encrypted.txt)
+        MOV r0, r9			//move file pointer into r0
+        BL fclose
 
     #Decrypt a message
+    GetInputDM:
+
+        #Open input file (encrypted.txt)
+        LDR r0, =encryptFile
+        LDR r1, =fileRead
+        BL fopen
+        MOV r9, r0			//move file pointer, r0, into r9
+
+        #Open output file (plaintext.txt)
+        LDR r0, =plaintextFile
+        LDR r1, =fileWrite
+        BL fopen
+        MOV r10, r0			//move file pointer, r0, into r10
+
+        #Loop through message one character at a time
+        StartDecryptLoop:
+            #Get ASCII value of character from encrypt file into r0
+            BL fscanf
+
+            #Check if end of file
+            CMP r0, #0
+            BEQ EndDecryptLoop
+
+            #Calculate m, decrypted character, using Decrypt Function
+            MOV r1, r11			//move d (private key) from r11 to r1
+            MOV r2, r6			//move n (calculated modulus) from r6 to r2
+            BL decrypt
+
+            #Write m (decypt character) to plaintext file
+            MOV r1, r10			//move file pointer for plaintext to r1
+            BL fprintf
+
+            #Restart Loop for next character
+            B StartDecryptLoop
+
+        EndDecryptLoop:
+
+        #Close input file (encrypted.txt)
+        MOV r0, r9
+        BL fclose
+
+        #Close output file (plaintext.txt)
+        MOV r0, r10
+        BL fclose
 
     EndProgram:
 	   
@@ -195,5 +288,35 @@ main:
 
     #error if p and q are equal
     equalErrorMsg:	.asciz	"\nInvalid input: p and q cannot be equal.\n"
+
+    #prompt for user input
+    promptO:		.asciz "\nEnter 1 for Encrypt, 2 for Decrypt, or 3 to Exit: "
+
+    #format for user input
+    optionsFormat:	.asciz "%d"
+
+    #variable for user input for Options
+    optionsVariable:	.word	0
+
+    #prompt for use input
+    promptEM:		.asciz "\nPlease enter a short message to encrypt: "
+
+    #format for user input
+    encryptionMessageFormat:	.asciz "%s"
+
+    #variable for user input for enryption message
+    encryptionMessage:	.space	256
+
+    #encrypt file
+    encryptFile:	.asciz "encrypt.txt"
+
+    #file Write
+    fileWrite:		.asciz "w"
+
+    #file Read
+    fileRead:		.asciz "r"
+
+    #plaintext file
+    plaintextFile:	.asciz "plaintext.txt"
 
   

@@ -195,16 +195,46 @@ gcd:
 
 .text
 pow:
+    #Purpose: Calculates the power of r0^r1
+    #Program Dictionary:
+    #r4:	Loop Counter
+    #r5:	Loop Limit
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #12
     STR lr, [sp]
-  
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
 
+    #Initialize Loop Counter
+    MOV r4, #0
+
+    #Move base from r0 to r2
+    MOV r2, r0
+
+    #Move exponent from r1 to r5, loop limit
+    MOV r5, r1
+  
+    #Loop
+    startPowLoop:
+        #Check the limit
+        CMP r4, r5
+        BGE endPowLoop
+
+        #Multiply base by base
+        MUL r0, r0, r2
+
+        #Get next
+        ADD r4, r4, #1
+        B startPowLoop
+
+    endPowLoop:
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
     MOV pc, lr    
 	
 .data
@@ -405,7 +435,15 @@ encrypt:
     SUB sp, sp, #4
     STR lr, [sp]
   
+    #c = (m^e) % n
+    #Calculate m to the power of e
+    BL pow
 
+    #Move n from r2 to r1
+    MOV r1, r2
+
+    #Calculate Modulo, r0 % r1, result is c
+    BL modulo
 
     #pop stack
     LDR lr, [sp]
@@ -424,7 +462,15 @@ decrypt:
     SUB sp, sp, #4
     STR lr, [sp]
   
+    #m = (c^d) % n
+    #Calculate c to the power of d
+    BL pow
 
+    #Move n from r2 to r1
+    MOV r1, r2
+
+    #Calculate Modulo, r0 % r1, result is m
+    BL modulo
 
     #pop stack
     LDR lr, [sp]
