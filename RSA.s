@@ -408,7 +408,7 @@ decrypt_message:
     decryption_read_loop:
         LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
-        LDR r1, =decrypt_readFileContentFormat
+        LDR r1, =encrypted_file_content
         LDR r1, [r1]
         BL fscanf
         CMP r0, #-1
@@ -482,6 +482,7 @@ decrypt_message:
 
     decrypt_errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
     decrypt_file_content: .space 40
+    encrypted_file_content: .word 0
 
     decrypt_file_read_pointer: .word 0
     decrypt_file_write_pointer: .word 0
