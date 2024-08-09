@@ -438,7 +438,8 @@ cprivexp:
     # Compute privateKeyExp using following formula
     # R2 will hold the valid X for computing privateKeyExp
     # (1 + x * totient) / e
-
+    LDR r2, =x_loop_counter
+    LDR r2, [r2]
     MUL r0, r2, r4      // x * totient
     ADD r0, r0, #1      // 1 + (x * totient)
     MOV r1, r5          // move pubKeyExp e to r1
