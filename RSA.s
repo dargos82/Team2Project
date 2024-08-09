@@ -394,16 +394,16 @@ decrypt_message:
     CMP r0, #0
     BEQ decrypt_invalid_file
 
-        #LDR r0, =decrypt_outputFileFormat
-        #LDR r1, =decrypt_input_file
-        #BL printf
+        LDR r0, =decrypt_outputFileFormat
+        LDR r1, =decrypt_input_file
+        BL printf
 
         # Initialize write file pointer
-        #LDR r0, =decrypt_output_file_name
-        #LDR r1, =decrypt_file_write_mode
-        #BL fopen
-        #LDR r1, =decrypt_file_write_pointer
-        #STR r0, [r1]
+        LDR r0, =decrypt_output_file_name
+        LDR r1, =decrypt_file_write_mode
+        BL fopen
+        LDR r1, =decrypt_file_write_pointer
+        STR r0, [r1]
 
     decryption_read_loop:
         LDR r0, =decrypt_file_read_pointer
@@ -426,12 +426,12 @@ decrypt_message:
             # ........
             # ........
 
-            #LDR r0, =decrypt_file_write_pointer
-            #LDR r0, [r0]
-            #LDR r1, =decrypt_writeFileContentFormat
-            #LDR r2, =decrypt_file_content
-            #LDR r2, [r2]
-            #BL fprintf
+            LDR r0, =decrypt_file_write_pointer
+            LDR r0, [r0]
+            LDR r1, =decrypt_writeFileContentFormat
+            LDR r2, =decrypt_file_content
+            LDR r2, [r2]
+            BL fprintf
 
             LDR r1, =decrypt_file_content
             LDR r1, [r1]
@@ -447,9 +447,9 @@ decrypt_message:
         LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
         BL fclose
-        #LDR r0, =decrypt_file_write_pointer
-        #LDR r0, [r0]
-        #BL fclose
+        LDR r0, =decrypt_file_write_pointer
+        LDR r0, [r0]
+        BL fclose
         B decrypt_done
 
     decrypt_invalid_file:
@@ -479,10 +479,10 @@ decrypt_message:
     decrypt_outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
     decrypt_readFileContentFormat: .asciz "%d"
     decrypt_outputFileContentFormat: .asciz "%d "
-    decrypt_outputDecryptedFileFormat: .asciz "Decrypted content is written to file [ 'decrypted.txt' ]\n"
+    decrypt_outputDecryptedFileFormat: .asciz "\nDecrypted content is written to file [ 'decrypted.txt' ]\n"
     decrypt_outputNextLineFormat: .asciz "\n"
 
-    decrypt_writeFileContentFormat: .asciz "%c"
+    decrypt_writeFileContentFormat: .asciz "%d "
 
     decrypt_errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
     decrypt_file_content: .space 40
