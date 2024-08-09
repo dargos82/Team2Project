@@ -410,7 +410,6 @@ decrypt_message:
         LDR r0, [r0]
         LDR r1, =decrypt_readFileContentFormat
         LDR r2, =encrypted_file_content
-        
         BL fscanf
 
         CMP r0, #1
