@@ -399,11 +399,11 @@ decrypt_message:
         BL printf
 
         # Initialize write file pointer
-        LDR r0, =decrypt_output_file_name
-        LDR r1, =decrypt_file_write_mode
-        BL fopen
-        LDR r1, =decrypt_file_write_pointer
-        STR r0, [r1]
+        #LDR r0, =decrypt_output_file_name
+        #LDR r1, =decrypt_file_write_mode
+        #BL fopen
+        #LDR r1, =decrypt_file_write_pointer
+        #STR r0, [r1]
 
     decryption_read_loop:
         LDR r0, =decrypt_file_read_pointer
@@ -422,12 +422,12 @@ decrypt_message:
             # ........
             # ........
 
-            LDR r0, =decrypt_file_write_pointer
-            LDR r0, [r0]
-            LDR r1, =decrypt_writeFileContentFormat
-            LDR r2, =decrypt_file_content
-            LDR r2, [r2]
-            BL fprintf
+            #LDR r0, =decrypt_file_write_pointer
+            #LDR r0, [r0]
+            #LDR r1, =decrypt_writeFileContentFormat
+            #LDR r2, =decrypt_file_content
+            #LDR r2, [r2]
+            #BL fprintf
 
             LDR r1, =decrypt_file_content
             LDR r1, [r1]
