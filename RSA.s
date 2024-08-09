@@ -392,7 +392,7 @@ decrypt_message:
     LDR r1, =decrypt_file_read_pointer
     STR r0, [r1]
     CMP r0, #0
-    BEQ invalid_file
+    BEQ decrypt_invalid_file
 
         LDR r0, =decrypt_outputFileFormat
         LDR r1, =decrypt_input_file
@@ -437,22 +437,22 @@ decrypt_message:
             B decryption_read_loop
         
     end_decryption_read_loop:
-        B close_file
+        B decrypt_close_file
 
-    close_file:
+    decrypt_close_file:
         LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
         BL fclose
         LDR r0, =decrypt_file_write_pointer
         LDR r0, [r0]
         BL fclose
-        B done
+        B decrypt_done
 
-    invalid_file:
+    decrypt_invalid_file:
         LDR r0, =decrypt_errorInvalidFile
         BL printf
 
-    done:
+    decrypt_done:
 
     LDR r0, =decrypt_outputNextLineFormat
     BL printf
