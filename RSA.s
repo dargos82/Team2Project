@@ -156,7 +156,9 @@ main:
     BL printf
     
     # Encrypt a message
-
+    MOV r0, #5              // move pubKeyExp to r0
+    MOV r1, r6              // move modulus N to r1
+    BL encrypt_message
 
     # Decrypt a message
 
