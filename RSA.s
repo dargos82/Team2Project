@@ -411,6 +411,10 @@ decrypt_message:
         LDR r1, =encrypted_file_content
         LDR r1, [r1]
         BL fscanf
+
+        LDR r0, =encrypted_file_content
+        LDR r0, [r0]
+        
         CMP r0, #-1
         BEQ end_decryption_read_loop
 
