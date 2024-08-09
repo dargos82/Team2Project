@@ -406,17 +406,17 @@ decrypt_message:
         #STR r0, [r1]
 
     decryption_read_loop:
-        LDR r0, =decrypt_file_read_pointer
-        LDR r0, [r0]
+        LDR r0, =decrypt_readFileContentFormat
         LDR r1, =encrypted_file_content
-        LDR r1, [r1]
+        LDR r2, =decrypt_file_read_pointer
+        LDR r2, [r2]
         BL fscanf
 
         LDR r0, =encrypted_file_content
         LDR r0, [r0]
-        
-        CMP r0, #-1
-        BEQ end_decryption_read_loop
+
+        CMP r0, #1
+        BNE end_decryption_read_loop
 
             LDR r1, =decrypt_file_content
             STR r0, [r1]
