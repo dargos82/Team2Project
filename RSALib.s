@@ -402,7 +402,8 @@ cprivexp:
 
     # Initialize R0 with 1 to compute X in solve following equation
     # (1 + x * totient) / e
-    MOV r2, #1
+    LDR r2, =x_loop_counter
+    LDR r2, [r2]
 
     startLoop:
 
@@ -421,7 +422,10 @@ cprivexp:
         BEQ endLoop
 
             # Increment X
+            LDR r2, =x_loop_counter
+            LDR r2, [r2]
             ADD r2, r2, #1
+            STR r2, [r2]
             B startLoop
 
     endLoop:
@@ -456,6 +460,8 @@ cprivexp:
 .data
     #error message if x value is not found
     xNotFoundMsg:	.asciz	"\nUnable to compute private key exponent.\n"
+
+    x_loop_counter: .word 1
 
 #END cprivexp
 

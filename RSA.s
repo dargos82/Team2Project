@@ -151,7 +151,7 @@ main:
 
     #Generate private key exponent
     MOV r0, r7              // move totient to r0
-    MOV r1, #5             // move pubKeyExp to r1
+    MOV r1, #5              // move pubKeyExp to r1
     BL cprivexp
     MOV r11, r0             // move private key exp to r11
 
