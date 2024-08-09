@@ -378,43 +378,43 @@ decrypt_message:
 
     BL print_line_separator
 
-    LDR r0, =promptFile
+    LDR r0, =promptDecryptFile
     BL printf
 
-    LDR r0, =inputFormat
-    LDR r1, =input_file
+    LDR r0, =inputDecryptFormat
+    LDR r1, =decrypt_input_file
     BL scanf
 
-    LDR r0, =input_file
-    LDR r1, =file_read_mode
+    LDR r0, =decrypt_input_file
+    LDR r1, =decrypt_file_read_mode
     BL fopen
 
-    LDR r1, =file_read_pointer
+    LDR r1, =decrypt_file_read_pointer
     STR r0, [r1]
     CMP r0, #0
     BEQ invalid_file
 
-        LDR r0, =outputFileFormat
-        LDR r1, =input_file
+        LDR r0, =decrypt_outputFileFormat
+        LDR r1, =decrypt_input_file
         BL printf
 
         # Initialize write file pointer
-        LDR r0, =output_file_name
-        LDR r1, =file_write_mode
+        LDR r0, =decrypt_output_file_name
+        LDR r1, =decrypt_file_write_mode
         BL fopen
-        LDR r1, =file_write_pointer
+        LDR r1, =decrypt_file_write_pointer
         STR r0, [r1]
 
-    read_loop:
-        LDR r0, =file_read_pointer
+    decryption_read_loop:
+        LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
-        LDR r1, =readFileContentFormat
+        LDR r1, =decrypt_readFileContentFormat
         LDR r1, [r1]
         BL fscanf
         CMP r0, #-1
-        BEQ end_read_loop
+        BEQ end_decryption_read_loop
 
-            LDR r1, =file_content
+            LDR r1, =decrypt_file_content
             STR r0, [r1]
 
             # Process file content character by character
@@ -422,42 +422,42 @@ decrypt_message:
             # ........
             # ........
 
-            LDR r0, =file_write_pointer
+            LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
-            LDR r1, =writeFileContentFormat
-            LDR r2, =file_content
+            LDR r1, =decrypt_writeFileContentFormat
+            LDR r2, =decrypt_file_content
             LDR r2, [r2]
             BL fprintf
 
-            LDR r1, =file_content
+            LDR r1, =decrypt_file_content
             LDR r1, [r1]
-            LDR r0, =outputFileContentFormat
+            LDR r0, =decrypt_outputFileContentFormat
             BL printf
 
-            B read_loop
+            B decryption_read_loop
         
-    end_read_loop:
+    end_decryption_read_loop:
         B close_file
 
     close_file:
-        LDR r0, =file_read_pointer
+        LDR r0, =decrypt_file_read_pointer
         LDR r0, [r0]
         BL fclose
-        LDR r0, =file_write_pointer
+        LDR r0, =decrypt_file_write_pointer
         LDR r0, [r0]
         BL fclose
         B done
 
     invalid_file:
-        LDR r0, =errorInvalidFile
+        LDR r0, =decrypt_errorInvalidFile
         BL printf
 
     done:
 
-    LDR r0, =outputNextLineFormat
+    LDR r0, =decrypt_outputNextLineFormat
     BL printf
 
-    LDR r0, =outputEncryptedFileFormat
+    LDR r0, =decrypt_outputDecryptedFileFormat
     BL printf
 
     # Pop from stack
@@ -468,26 +468,26 @@ decrypt_message:
     MOV pc, lr
 
 .data
-    promptFile: .asciz "\nEnter a encrypted file path to decrypt: "
-    inputFormat: .asciz "%s"
-    input_file: .space 50
+    promptDecryptFile: .asciz "\nEnter a encrypted file path to decrypt: "
+    inputDecryptFormat: .asciz "%s"
+    decrypt_input_file: .space 50
 
-    outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
-    readFileContentFormat: .asciz "%d"
-    outputFileContentFormat: .asciz "%c"
-    outputEncryptedFileFormat: .asciz "Decrypted content is written to file [ 'decrypted.txt' ]\n"
-    outputNextLineFormat: .asciz "\n"
+    decrypt_outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
+    decrypt_readFileContentFormat: .asciz "%d"
+    decrypt_outputFileContentFormat: .asciz "%c"
+    decrypt_outputDecryptedFileFormat: .asciz "Decrypted content is written to file [ 'decrypted.txt' ]\n"
+    decrypt_outputNextLineFormat: .asciz "\n"
 
-    writeFileContentFormat: .asciz "%c"
+    decrypt_writeFileContentFormat: .asciz "%c"
 
-    errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
-    file_content: .space 40
+    decrypt_errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
+    decrypt_file_content: .space 40
 
-    file_read_pointer: .word 0
-    file_write_pointer: .word 0
-    file_read_mode: .asciz  "r"
-    file_write_mode: .asciz  "w"
-    output_file_name: .asciz "decrypted.txt"
+    decrypt_file_read_pointer: .word 0
+    decrypt_file_write_pointer: .word 0
+    decrypt_file_read_mode: .asciz  "r"
+    decrypt_file_write_mode: .asciz  "w"
+    decrypt_output_file_name: .asciz "decrypted.txt"
 
 # END encrypt_message
 # ----------------------------------------------------------------------------------
