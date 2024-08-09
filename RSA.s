@@ -327,13 +327,13 @@ encrypt_message:
     MOV pc, lr
 
 .data
-    promptFile: .asciz "Enter a clear-text file path to encrypt: "
+    promptFile: .asciz "\nEnter a clear-text file path to encrypt: "
     inputFormat: .asciz "%s"
     input_file: .space 50
 
     outputFileFormat: .asciz "\nContent of the file [ %s ] is: "
     outputFileContentFormat: .asciz "%c"
-    outputEncryptedFileFormat: .asciz "Encrypted content is written to file [ 'encrypted.txt' ]"
+    outputEncryptedFileFormat: .asciz "Encrypted content is written to file [ 'encrypted.txt' ]\n"
     outputNextLineFormat: .asciz "\n"
 
     writeFileContentFormat: .asciz "%c"
