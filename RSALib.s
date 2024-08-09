@@ -207,7 +207,7 @@ pow:
     STR r5, [sp, #8]
 
     #Initialize Loop Counter
-    MOV r4, #0
+    MOV r4, #1
 
     #Move base from r0 to r2
     MOV r2, r0
@@ -217,16 +217,16 @@ pow:
   
     #Loop
     startPowLoop:
-        #Check the limit
+        # Check the limit
         CMP r4, r5
         BGE endPowLoop
 
-        #Multiply base by base
-        MUL r0, r0, r2
+            # Multiply base by base
+            MUL r0, r0, r2
 
-        #Get next
-        ADD r4, r4, #1
-        B startPowLoop
+            #Get next
+            ADD r4, r4, #1
+            B startPowLoop
 
     endPowLoop:
 
@@ -506,22 +506,32 @@ cprivexp:
 encrypt:
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #16
     STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
+
+    MOV r0, r4          // move clear-text character to R0
+    MOV r1, r5          // move pubKeyExp to R1
+    MOV r2, r6          // move modulus N to R2
   
     #c = (m^e) % n
     #Calculate m to the power of e
     BL pow
 
     #Move n from r2 to r1
-    MOV r1, r2
+    MOV r1, r6
 
     #Calculate Modulo, r0 % r1, result is c
     BL modulo
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    ADD sp, sp, #16
     MOV pc, lr    
 
 .data
