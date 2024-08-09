@@ -237,6 +237,8 @@ encrypt_message:
     # Store input modulus N into R5
     MOV r5, r1
 
+    BL print_line_separator
+
     LDR r0, =promptFile
     BL printf
 
@@ -349,5 +351,38 @@ encrypt_message:
 
 # END encrypt_message
 # ----------------------------------------------------------------------------------
+.text
+print_line_separator:
+    # Push to the stack
+    SUB sp, sp, #4
+    STR lr, [sp, #0]
 
+    MOV r1, #0
+
+    LDR r0, =outputNextLine
+    BL printf
+
+    startLoop:
+        CMP r1, #80
+        BGT endLoop
+            LDR r0, =outputLineSeparator
+            BL printf
+
+            ADD r1, r1, #1
+    endLoop:
+
+    LDR r0, =outputNextLine
+    BL printf
+
+    # Pop from stack and return
+    LDR lr, [sp, #0]
+    ADD sp, sp, #4
+    MOV pc, lr
+
+.data
+    outputLineSeparator: .asciz "-"
+    outputNextLine: .asciz "\n"
+
+# END main 
+# ----------------------------------------------------------------------------------
   
