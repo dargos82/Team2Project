@@ -135,7 +135,7 @@ main:
     GetTotient:
     	MOV r0, r4			//move keyVariableP from r4 to r0
     	MOV r1, r5			//move keyVariableQ from r5 to r1
-   	BL totient			//totient returned in r0
+   	    BL totient			//totient returned in r0
     	MOV r7, r0			//move totient phi from r0 to r7
 
 	B GetPublicKeyExponent
@@ -150,8 +150,8 @@ main:
     BL printf
 
     #Generate private key exponent
-    MOV r0, r7
-    MOV r1, r10
+    MOV r0, r7              // move totient to r0
+    MOV r1, #5             // move pubKeyExp to r1
     BL cprivexp
     MOV r11, r0             // move private key exp to r11
 
