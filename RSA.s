@@ -342,7 +342,7 @@ encrypt_message:
     writeFileContentFormat: .asciz "%c"
 
     errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
-    file_content: .space 40
+    file_content: .word 0
 
     file_read_pointer: .word 0
     file_write_pointer: .word 0
