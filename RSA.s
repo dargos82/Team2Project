@@ -520,6 +520,10 @@ print_line_separator:
     LDR r0, =outputNextLine
     BL printf
 
+    MOV r1, #1
+    LDR r3, =loop_counter
+    STR r1, [r3]
+
     # Pop from stack and return
     LDR lr, [sp, #0]
     ADD sp, sp, #4
