@@ -464,6 +464,8 @@ decrypt_message:
     LDR r0, =decrypt_outputDecryptedFileFormat
     BL printf
 
+    BL print_line_separator
+
     # Pop from stack
     LDR lr, [sp]
     LDR r4, [sp, #4]
