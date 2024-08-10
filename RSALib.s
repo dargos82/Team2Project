@@ -450,7 +450,7 @@ cprivexp:
     LDR r2, =x_loop_counter
     LDR r2, [r2]
 
-    startLoop:
+    startPrivExpLoop:
 
         CMP R2, R4
         BGT x_not_found
@@ -464,7 +464,7 @@ cprivexp:
         # If modulo function returns 0, then X is valid
         # else increment X and continue
         CMP r0, #0
-        BEQ endLoop
+        BEQ endPrivExpLoop
 
             # Increment X
             LDR r2, =x_loop_counter
@@ -472,9 +472,9 @@ cprivexp:
             ADD r2, r2, #1
             LDR r3, =x_loop_counter
             STR r2, [r3]
-            B startLoop
+            B startPrivExpLoop
 
-    endLoop:
+    endPrivExpLoop:
 
     # Compute privateKeyExp using following formula
     # R2 will hold the valid X for computing privateKeyExp
@@ -486,7 +486,7 @@ cprivexp:
     MOV r1, r5          // move pubKeyExp e to r1
 
     BL __aeabi_idiv
-    B done
+    B donePrivExp
 
     x_not_found:
         LDR r0, =xNotFoundMsg
@@ -495,7 +495,7 @@ cprivexp:
         # return -1 If X can't be computed
         MOV r0, #-1
 
-    done:
+    donePrivExp:
 
     # Pop from stack
     LDR lr, [sp]
@@ -957,7 +957,7 @@ print_line_separator:
     LDR r0, =outputNextLine
     BL printf
 
-    startLoop:
+    startLineSepLoop:
         CMP r1, #80
         BGT endLoop
             LDR r0, =outputLineSeparator
@@ -968,8 +968,8 @@ print_line_separator:
             ADD r1, r1, #1
             LDR r3, =loop_counter
             STR r1, [r3]
-            B startLoop
-    endLoop:
+            B startLineSepLoop
+    endLineSepLoop:
 
     LDR r0, =outputNextLine
     BL printf
