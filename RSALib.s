@@ -959,7 +959,7 @@ print_line_separator:
 
     startLineSepLoop:
         CMP r1, #80
-        BGT endLoop
+        BGT endLineSepLoop
             LDR r0, =outputLineSeparator
             BL printf
 
