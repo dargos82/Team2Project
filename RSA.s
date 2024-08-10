@@ -486,7 +486,7 @@ decrypt_message:
     decrypt_outputDecryptedFileFormat: .asciz "\nDecrypted content is written to file [ 'decrypted.txt' ]\n"
     decrypt_outputNextLineFormat: .asciz "\n"
 
-    decrypt_writeFileContentFormat: .asciz "%d "
+    decrypt_writeFileContentFormat: .asciz "%c"
 
     decrypt_errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
     decrypt_file_content: .space 40
