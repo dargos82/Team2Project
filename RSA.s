@@ -431,7 +431,7 @@ decrypt_message:
             MOV r2, r0
 
             LDR r0, =decrypt_file_content
-            LDR r0, [r0]
+            STR r0, [r0]
 
             LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
