@@ -139,7 +139,7 @@ main:
 
     # Generate public key exponent
     BL cpubexp				//r10 = valid public key exponent
-    MOV r10, r1             // move public key exp to r10
+    MOV r10, r0             // move public key exp to r10
 
     LDR r0, =pubKeyExp
     MOV r1, r10
