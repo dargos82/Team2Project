@@ -599,7 +599,7 @@ modulus_exponentiation:
     STR r4, [sp, #4]
     STR r5, [sp, #8]
     STR r6, [sp, #12]
-    STR r7, [sp, #20]
+    STR r7, [sp, #16]
 
     MOV r4, r0          // move base to R4
     MOV r5, r1          // move exponent to R5
@@ -646,6 +646,7 @@ modulus_exponentiation:
     LDR r4, [sp, #4]
     LDR r5, [sp, #8]
     LDR r6, [sp, #12]
+    LDR r7, [sp, #16]
     ADD sp, sp, #20
     MOV pc, lr    
 
