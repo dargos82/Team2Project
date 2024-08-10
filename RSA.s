@@ -430,8 +430,8 @@ decrypt_message:
             BL modulus_exponentiation
             MOV r2, r0
 
-            LDR r0, =decrypt_file_content
-            STR r0, [r0]
+            LDR r1, =decrypt_file_content
+            STR r0, [r1]
 
             LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
