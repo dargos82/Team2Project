@@ -430,7 +430,7 @@ decrypt_message:
             BL modulus_exponentiation
             MOV r2, r0
 
-            LDR r0, =decrypted_file_content
+            LDR r0, =decrypt_file_content
             LDR r0, [r0]
 
             LDR r0, =decrypt_file_write_pointer
@@ -438,7 +438,7 @@ decrypt_message:
             LDR r1, =decrypt_writeFileContentFormat
             BL fprintf
 
-            LDR r1, =decrypted_file_content
+            LDR r1, =decrypt_file_content
             LDR r1, [r1]
             LDR r0, =decrypt_outputFileContentFormat
             BL printf
