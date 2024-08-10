@@ -326,38 +326,23 @@ cpubexp:
     STR lr, [sp]
 
     GetPubKeyExp:
-<<<<<<< HEAD
-
-        MOV r0, #100
-	CMP r7, r0
-        BGE dividePhi
-	    MOV r1, r7
-     	    B continue
-   
-=======
- 
+        
         MOV r0, #100
         CMP r7, r0
         BGE dividePhi
-	    MOV r1, r7 
-	    B continue 
+	          MOV r1, r7 
+	          B continue 
 
->>>>>>> 41d1c36 (updated errors with phi)
     dividePhi:
         MOV r0, r7
         MOV r1, #10
         BL __aeabi_idiv
         MOV r1, r0
-<<<<<<< HEAD
-        B continue
-=======
      	B continue
 
     continue:
->>>>>>> 41d1c36 (updated errors with phi)
-
-    continue:
-    	LDR r0, =pubKeyExpPrompt
+    
+    LDR r0, =pubKeyExpPrompt
    	BL printf
     
    	LDR r0, =pubKeyExpFormat
@@ -395,6 +380,7 @@ cpubexp:
 	    LDR r0, =validExpMsg
 	    MOV r1, r10
 	    BL printf
+ 	    MOV r0, r10
 	    B EndCPubExp
 
     ExpErrorRange:
