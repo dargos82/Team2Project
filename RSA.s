@@ -139,7 +139,7 @@ main:
 
     # Generate public key exponent
     BL cpubexp				//r10 = valid public key exponent
-    MOV r10, r1             // move public key exp to r10
+    MOV r10, r0             // move public key exp to r10
 
     LDR r0, =pubKeyExp
     MOV r1, r10
@@ -147,7 +147,7 @@ main:
 
     # Generate private key exponent
     MOV r0, r7              // move totient to r0
-    MOV r1, #5              // move pubKeyExp to r1
+    MOV r1, r10              // move pubKeyExp to r1
     BL cprivexp
     MOV r11, r0             // move private key exp to r11
 
@@ -156,7 +156,7 @@ main:
     BL printf
     
     # Encrypt a message
-    MOV r0, #5              // move pubKeyExp to r0
+    MOV r0, r10              // move pubKeyExp to r0
     MOV r1, r6              // move modulus N to r1
     BL encrypt_message
 
