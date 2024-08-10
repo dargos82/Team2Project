@@ -533,6 +533,7 @@ encrypt:
 
     #Calculate Modulo, r0 % r1, result is c
     BL modulo
+    
 
     #pop stack
     LDR lr, [sp]
@@ -583,6 +584,72 @@ decrypt:
 
 #END decrypt
 
+.text
+modulus_exponentiation:
+# Program Dictionary
+# r4 - base
+# r5 - exponent
+# r6 - modulus
+# r7 - result
 
+    #push stack
+    SUB sp, sp, #20
+    STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
+    STR r7, [sp, #20]
+
+    MOV r4, r0          // move base to R4
+    MOV r5, r1          // move exponent to R5
+    MOV r6, r2          // move modulus to R6
+    MOV r7, #1
+
+    startLoop:
+        CMP r5, #0
+        BLE endLoop
+
+        # Check exponent % 2 == 1
+        MOV r0, r5
+        MOV r1, #2
+        BL modulo
+        CMP r0, #1
+        BNE evaluate
+            # result = (result * base) % modulus
+            MUL r0, r7, r4
+            MOV r1, r6
+            BL modulo
+            MOV r7, r0
+            B evaluate
+
+    evaluate:
+        # exponent = exponent / 2
+        MOV r0, r5
+        MOV r1, #2
+        BL __aeabi_idiv
+        MOV r5, r0
+
+        # base = (base * base) % modulus
+        MUL r0, r4, r4
+        MOV r1, r6
+        BL modulo
+        MOV r4, r0
+        B startLoop
+
+    endLoop:
+
+    MOV r0, r7
+
+    #pop stack
+    LDR lr, [sp]
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    ADD sp, sp, #20
+    MOV pc, lr    
+
+.data
+
+#END encrypt
 
 

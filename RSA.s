@@ -287,7 +287,7 @@ encrypt_message:
 
             # Process file content character by character
             # Logic to encrypt character goes here
-            BL encrypt
+            BL modulus_exponentiation
             MOV r2, r0
 
             LDR r0, =file_write_pointer
@@ -427,7 +427,7 @@ decrypt_message:
 
             # Process file content character by character
             # Logic to encrypt character goes here
-            BL decrypt
+            BL modulus_exponentiation
             MOV r2, r0
 
             LDR r0, =decrypt_file_write_pointer
