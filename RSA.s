@@ -139,7 +139,7 @@ main:
 
     # Generate public key exponent
     BL cpubexp				//r10 = valid public key exponent
-    MOV r10, r0             // move public key exp to r10
+    MOV r10, r1             // move public key exp to r10
 
     LDR r0, =pubKeyExp
     MOV r1, r10
@@ -279,16 +279,20 @@ encrypt_message:
             LDR r1, =file_content
             STR r0, [r1]
 
+            LDR r1, =file_content
+            LDR r1, [r1]
+            MOV r0, r1
+            MOV r1, r4
+            MOV r2, r5
+
             # Process file content character by character
             # Logic to encrypt character goes here
-            # ........
-            # ........
+            BL modulus_exponentiation
+            MOV r2, r0
 
             LDR r0, =file_write_pointer
             LDR r0, [r0]
             LDR r1, =writeFileContentFormat
-            LDR r2, =file_content
-            LDR r2, [r2]
             BL fprintf
 
             LDR r1, =file_content
@@ -339,10 +343,10 @@ encrypt_message:
     outputEncryptedFileFormat: .asciz "Encrypted content is written to file [ 'encrypted.txt' ]\n"
     outputNextLineFormat: .asciz "\n"
 
-    writeFileContentFormat: .asciz "%c"
+    writeFileContentFormat: .asciz "%d "
 
     errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
-    file_content: .space 40
+    file_content: .word 0
 
     file_read_pointer: .word 0
     file_write_pointer: .word 0
@@ -418,19 +422,20 @@ decrypt_message:
             LDR r0, =encrypted_file_content
             LDR r0, [r0]
 
-            LDR r1, =decrypt_file_content
-            STR r0, [r1]
+            MOV r1, r4
+            MOV r2, r5
 
             # Process file content character by character
-            # Logic to decrypt character goes here
-            # ........
-            # ........
+            # Logic to encrypt character goes here
+            BL modulus_exponentiation
+            MOV r2, r0
+
+            LDR r1, =decrypt_file_content
+            STR r0, [r1]
 
             LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
             LDR r1, =decrypt_writeFileContentFormat
-            LDR r2, =decrypt_file_content
-            LDR r2, [r2]
             BL fprintf
 
             LDR r1, =decrypt_file_content
@@ -484,7 +489,7 @@ decrypt_message:
     decrypt_outputDecryptedFileFormat: .asciz "\nDecrypted content is written to file [ 'decrypted.txt' ]\n"
     decrypt_outputNextLineFormat: .asciz "\n"
 
-    decrypt_writeFileContentFormat: .asciz "%d "
+    decrypt_writeFileContentFormat: .asciz "%c"
 
     decrypt_errorInvalidFile: .asciz "\nError: File doesn't exist or access denied\n"
     decrypt_file_content: .space 40
@@ -496,7 +501,7 @@ decrypt_message:
     decrypt_file_write_mode: .asciz  "w"
     decrypt_output_file_name: .asciz "decrypted.txt"
 
-# END encrypt_message
+# END decrypt_message
 # ----------------------------------------------------------------------------------
 .text
 print_line_separator:

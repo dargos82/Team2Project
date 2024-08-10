@@ -10,6 +10,7 @@
 .global cprivexp
 .global encrypt
 .global decrypt
+.global modulus_exponentiation
 
 .text
 checkRange:
@@ -195,21 +196,51 @@ gcd:
 
 .text
 pow:
+    #Purpose: Calculates the power of r0^r1
+    #Program Dictionary:
+    #r4:	Loop Counter
+    #r5:	Loop Limit
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #12
     STR lr, [sp]
-  
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
 
+    #Initialize Loop Counter
+    MOV r4, #1
+
+    #Move base from r0 to r2
+    MOV r2, r0
+
+    #Move exponent from r1 to r5, loop limit
+    MOV r5, r1
+  
+    #Loop
+    startPowLoop:
+        # Check the limit
+        CMP r4, r5
+        BGE endPowLoop
+
+            # Multiply base by base
+            MUL r0, r0, r2
+
+            #Get next
+            ADD r4, r4, #1
+            B startPowLoop
+
+    endPowLoop:
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    ADD sp, sp, #12
     MOV pc, lr    
 	
 .data
 
-#END pow
+# END pow
 
 .text
 modulo:
@@ -486,14 +517,33 @@ cprivexp:
 encrypt:
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #16
     STR lr, [sp]
-  
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
 
+    MOV r4, r0          // move clear-text character to R4
+    MOV r5, r1          // move pubKeyExp to R5
+    MOV r6, r2          // move modulus N to R6
+  
+    #c = (m^e) % n
+    #Calculate m to the power of e
+    BL pow
+
+    #Move n from r2 to r1
+    MOV r1, r6
+
+    #Calculate Modulo, r0 % r1, result is c
+    BL modulo
+    
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    ADD sp, sp, #16
     MOV pc, lr    
 
 .data
@@ -505,20 +555,105 @@ encrypt:
 decrypt:
 
     #push stack
-    SUB sp, sp, #4
+    SUB sp, sp, #16
     STR lr, [sp]
-  
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
 
+    MOV r4, r0          // move encrypted character to R4
+    MOV r5, r1          // move pubKeyExp to R5
+    MOV r6, r2          // move modulus N to R6
+  
+    #m = (c^d) % n
+    #Calculate c to the power of d
+    BL pow
+
+    #Move n from r2 to r1
+    MOV r1, r6
+
+    #Calculate Modulo, r0 % r1, result is m
+    BL modulo
 
     #pop stack
     LDR lr, [sp]
-    ADD sp, sp, #4
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    ADD sp, sp, #16
     MOV pc, lr    
 
 .data
 
 #END decrypt
 
+.text
+modulus_exponentiation:
+# Program Dictionary
+# r4 - base
+# r5 - exponent
+# r6 - modulus
+# r7 - result
 
+    #push stack
+    SUB sp, sp, #20
+    STR lr, [sp]
+    STR r4, [sp, #4]
+    STR r5, [sp, #8]
+    STR r6, [sp, #12]
+    STR r7, [sp, #16]
+
+    MOV r4, r0          // move base to R4
+    MOV r5, r1          // move exponent to R5
+    MOV r6, r2          // move modulus to R6
+    MOV r7, #1
+
+    startModExpLoop:
+        CMP r5, #0
+        BLE endModExpLoop
+
+        # Check exponent % 2 == 1
+        MOV r0, r5
+        MOV r1, #2
+        BL modulo
+        CMP r0, #1
+        BNE evaluate
+            # result = (result * base) % modulus
+            MUL r0, r7, r4
+            MOV r1, r6
+            BL modulo
+            MOV r7, r0
+            B evaluate
+
+    evaluate:
+        # exponent = exponent / 2
+        MOV r0, r5
+        MOV r1, #2
+        BL __aeabi_idiv
+        MOV r5, r0
+
+        # base = (base * base) % modulus
+        MUL r0, r4, r4
+        MOV r1, r6
+        BL modulo
+        MOV r4, r0
+        B startModExpLoop
+
+    endModExpLoop:
+
+    MOV r0, r7
+
+    #pop stack
+    LDR lr, [sp]
+    LDR r4, [sp, #4]
+    LDR r5, [sp, #8]
+    LDR r6, [sp, #12]
+    LDR r7, [sp, #16]
+    ADD sp, sp, #20
+    MOV pc, lr    
+
+.data
+
+#END encrypt
 
 
