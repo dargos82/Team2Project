@@ -10,6 +10,7 @@
 .global cprivexp
 .global encrypt
 .global decrypt
+.global modulus_exponentiation
 
 .text
 checkRange:
