@@ -605,9 +605,9 @@ modulus_exponentiation:
     MOV r6, r2          // move modulus to R6
     MOV r7, #1
 
-    startLoop:
+    startModExpLoop:
         CMP r5, #0
-        BLE endLoop
+        BLE endModExpLoop
 
         # Check exponent % 2 == 1
         MOV r0, r5
@@ -634,9 +634,9 @@ modulus_exponentiation:
         MOV r1, r6
         BL modulo
         MOV r4, r0
-        B startLoop
+        B startModExpLoop
 
-    endLoop:
+    endModExpLoop:
 
     MOV r0, r7
 
