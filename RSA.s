@@ -430,12 +430,15 @@ decrypt_message:
             BL modulus_exponentiation
             MOV r2, r0
 
+            LDR r0, =decrypted_file_content
+            LDR r0, [r0]
+
             LDR r0, =decrypt_file_write_pointer
             LDR r0, [r0]
             LDR r1, =decrypt_writeFileContentFormat
             BL fprintf
 
-            LDR r1, =decrypt_file_content
+            LDR r1, =decrypted_file_content
             LDR r1, [r1]
             LDR r0, =decrypt_outputFileContentFormat
             BL printf
@@ -498,7 +501,7 @@ decrypt_message:
     decrypt_file_write_mode: .asciz  "w"
     decrypt_output_file_name: .asciz "decrypted.txt"
 
-# END encrypt_message
+# END decrypt_message
 # ----------------------------------------------------------------------------------
 .text
 print_line_separator:
