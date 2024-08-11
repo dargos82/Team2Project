@@ -50,6 +50,26 @@ main:
     CMP r4, #2
     BEQ EndProgram
 
+    #User Options 1
+    LDR r0, =promptOp1
+    BL printf
+
+    #Read, verify, and load user input
+    LDR r0, =opFormat
+    LDR r1, =opVariable1
+    BL scanf
+
+    LDR r4, =opVariable1
+    LDR r4, [r4]
+
+    #Branch to Generation of Private and Public Keys if user inputs 1
+    CMP r4, #1
+    BEQ GetInputP
+
+    #Branch to Exit if user inputs 2
+    CMP r4, #2
+    BEQ EndProgram
+
     GetInputP:
 
 	BL print_line_separator
@@ -279,6 +299,5 @@ main:
 
     #format for user options
     opFormat:		.asciz "%d"
-
 
 # END main
