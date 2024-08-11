@@ -28,7 +28,27 @@ main:
     STR r8, [sp, #20]
     STR r9, [sp, #24]
     STR r10, [sp, #28]
-    STR r11, [sp, #32]     
+    STR r11, [sp, #32]
+
+    #User Options 1
+    LDR r0, =promptOp1
+    BL printf
+
+    #Read, verify, and load user input
+    LDR r0, =opFormat
+    LDR r1, =opVariable1
+    BL scanf
+
+    LDR r4, =opVariable1
+    LDR r4, [r4]
+
+    #Branch to Generation of Private and Public Keys if user inputs 1
+    CMP r4, #1
+    BEQ GetInputP
+
+    #Branch to Exit if user inputs 2
+    CMP r4, #2
+    BEQ EndProgram
 
     #User Options 1
     LDR r0, =promptOp1
@@ -51,11 +71,13 @@ main:
     BEQ EndProgram
 
     GetInputP:
-    
+
+	BL print_line_separator
+
         #Get user input for P
         LDR r0, =promptP
         BL printf
-        
+
         #Read, verify, and load user input
         LDR r0, =keyVariablePFormat
         LDR r1, =keyVariableP
@@ -92,11 +114,11 @@ main:
         B GetInputP
 
     GetInputQ:
-    
+
         #Get user input for q
         LDR r0, =promptQ
         BL printf
-        
+
         #Read, verify, and load user input
         LDR r0, =keyVariableQFormat
         LDR r1, =keyVariableQ
@@ -141,7 +163,7 @@ main:
         LDR r0, =equalErrorMsg
         BL printf
         B GetInputQ
-    
+
     InputPQDone:
 
 
@@ -175,6 +197,8 @@ main:
     MOV r1, r11
     BL printf
 
+    BL print_line_separator
+
     #Prompt user for options 2
     LDR r0, =promptOp2
     BL printf
@@ -198,7 +222,7 @@ main:
     #Branch to Exit if user inputs 3
     CMP r4, #3
     BEQ EndProgram
-    
+
     Encrypt:
     # Encrypt a message
     MOV r0, r10              // move pubKeyExp to r0
@@ -214,7 +238,7 @@ main:
     BL decrypt_message
 
     EndProgram:
-	   
+
     # pop the stack
     LDR lr, [sp, #0]
     LDR r4, [sp, #4]
@@ -262,20 +286,18 @@ main:
     privKeyExp: .asciz "\nPrivate Key Exponent: %d\n"
 
     #prompt for user options1
-    promptOp1:		.asciz "\nPlease enter 1 to Generate Private and Public Keys or 2 to Exit: "
+    promptOp1:		.asciz "\nMenu options:  \n  1. Generate Private and Public Keys\n  2. Exit\nChoose your option: "
 
     #varibale for user options1
     opVariable1:	.word	0
 
     #prompt for user options2
-    promptOp2:		.asciz "\nPlease enter 1 to Encrypt, 2 to Decrypt, or 3 to Exit: "
+    promptOp2:		.asciz "\nMenu options: \n  1. Encrypt Message\n  2. Decrypt Message\n  3. Exit\nChoose your option: "
 
     #variable for user options2
     opVariable2:	.word	0
 
     #format for user options
     opFormat:		.asciz "%d"
-   
 
 # END main
-  

@@ -768,6 +768,8 @@ encrypt_message:
     LDR r0, =outputEncryptedFileFormat
     BL printf
 
+    BL print_line_separator
+
     # Pop from stack
     LDR lr, [sp]
     LDR r4, [sp, #4]
