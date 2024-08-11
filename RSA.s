@@ -30,6 +30,26 @@ main:
     STR r10, [sp, #28]
     STR r11, [sp, #32]     
 
+    #User Options 1
+    LDR r0, =promptOp1
+    BL printf
+
+    #Read, verify, and load user input
+    LDR r0, =opFormat
+    LDR r1, =opVariable1
+    BL scanf
+
+    LDR r4, =opVariable1
+    LDR r4, [r4]
+
+    #Branch to Generation of Private and Public Keys if user inputs 1
+    CMP r4, #1
+    BEQ GetInputP
+
+    #Branch to Exit if user inputs 2
+    CMP r4, #2
+    BEQ EndProgram
+
     GetInputP:
     
         #Get user input for P
@@ -154,12 +174,40 @@ main:
     LDR r0, =privKeyExp
     MOV r1, r11
     BL printf
+
+    #Prompt user for options 2
+    LDR r0, =promptOp2
+    BL printf
+
+    #Read, verify, and load user input
+    LDR r0, =opFormat
+    LDR r1, =opVariable2
+    BL scanf
+
+    LDR r4, =opVariable2
+    LDR r4, [r4]
+
+    #Branch to Encrypt if user inputs 1
+    CMP r4, #1
+    BEQ Encrypt
+
+    #Branch to Decrypt if user inputs 2
+    CMP r4, #2
+    BEQ Decrypt
+
+    #Branch to Exit if user inputs 3
+    CMP r4, #3
+    BEQ EndProgram
     
+    Encrypt:
     # Encrypt a message
     MOV r0, r10              // move pubKeyExp to r0
     MOV r1, r6              // move modulus N to r1
     BL encrypt_message
 
+    B EndProgram
+
+    Decrypt:
     # Decrypt a message
     MOV r0, r11             // move privKeyExp to r0
     MOV r1, r6              // move modulus N to r1
@@ -183,7 +231,7 @@ main:
 .data
 
     #prompt for user input
-    promptP:	.asciz	"\nFor p, please enter a prime number between 1 and 50: "
+    promptP:	.asciz	"\nFor p, please enter a prime number between 1 and 200: "
 
     #format for user input
     keyVariablePFormat:	.asciz	"%d"
@@ -192,7 +240,7 @@ main:
     keyVariableP:	.word	0
 
     #prompt for user input
-    promptQ:	.asciz	"\nFor q, please enter a prime number between 1 and 50: "
+    promptQ:	.asciz	"\nFor q, please enter a prime number between 1 and 200: "
 
     #format for user input
     keyVariableQFormat:	.asciz	"%d"
@@ -212,6 +260,22 @@ main:
     pubKeyExp: .asciz "\nPublic Key Exponent: %d\n"
 
     privKeyExp: .asciz "\nPrivate Key Exponent: %d\n"
+
+    #prompt for user options1
+    promptOp1:		.asciz "\nPlease enter 1 to Generate Private and Public Keys or 2 to Exit: "
+
+    #varibale for user options1
+    opVariable1:	.word	0
+
+    #prompt for user options2
+    promptOp2:		.asciz "\nPlease enter 1 to Encrypt, 2 to Decrypt, or 3 to Exit: "
+
+    #variable for user options2
+    opVariable2:	.word	0
+
+    #format for user options
+    opFormat:		.asciz "%d"
+   
 
 # END main
   
