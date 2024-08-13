@@ -27,7 +27,7 @@ checkRange:
     CMP r0, r1
     ADDGE r2, r2, #1		//if r0 >= 1, r2 = 1
 
-    MOV r1, #50
+    MOV r1, #200
     MOV r3, #0
     CMP r0, r1
     ADDLE r3, r3, #1		//if r0 <= 50, r3 = 1
