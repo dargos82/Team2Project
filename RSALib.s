@@ -16,6 +16,9 @@
 .global print_line_separator
 
 .text
+#Purpose: Checks if given input value is within the range of 1 - 200
+#Input: input value (r0)
+
 checkRange:
 
     #push stack
@@ -42,6 +45,7 @@ checkRange:
 .data
 
 #END checkRange
+#--------------------------------------------------------------------------------------
 
 .text
 #Purpose: function returns r0 = 1 if true (is a prime), r0 = 0 if false (is not a prime)
@@ -108,11 +112,10 @@ isPrime:
 
 #END isPrime
 
-
+#--------------------------------------------------------------------------------------
 
 .text
 gcd:
-
     #Purpose: Determine if phi and exponent are co-prime or not;
     #r0 = 0 if co-prime; r0 = 1 if not co-prime
     #Program dictionary:
@@ -196,6 +199,7 @@ gcd:
 
 #END gcd
 
+#--------------------------------------------------------------------------------------
 
 .text
 pow:
@@ -245,8 +249,15 @@ pow:
 
 # END pow
 
+#--------------------------------------------------------------------------------------
+
 .text
 modulo:
+
+    #Purpose: Calculates the modulo of r0 with r1
+    #Program Dictionary:
+    #r4:	Modulo Dividend
+    #r5:    Modulo Divisor
 
     #push stack
     SUB sp, sp, #12
@@ -272,10 +283,13 @@ modulo:
 
 #END modulo
 
-
+#--------------------------------------------------------------------------------------
 
 .text
 modulus:
+    #Purpose: Calculates the modulus N for given P and Q
+    #Input: P value (r0), Q value (r1)
+    #Return: return value of P * Q
 
     #push stack
     SUB sp, sp, #4
@@ -292,9 +306,14 @@ modulus:
 
 #END modulus
 
+#--------------------------------------------------------------------------------------
 
 .text
 totient:
+    #Purpose: Calculates the totient for given P and Q
+    #Input: P value (r0), Q value (r1)
+    #Return: return value of (P - 1) * (Q - 1)
+
     #push stack
     SUB sp, sp, #4
     STR lr, [sp]
@@ -317,12 +336,14 @@ totient:
 
 #END totient
 
+#--------------------------------------------------------------------------------------
+
 .text
 cpubexp:
-#Purpose: prompts user for e and checks it against set parameters
-#Program dictionary:
-#r7:	totient phi
-#r10:	pubKeyExp
+    #Purpose: prompts user for public key exponent and checks it against set parameters
+    #Program dictionary:
+    #r7:	totient phi
+    #r10:	pubKeyExp
 
     #push stack
     SUB sp, sp, #4
@@ -423,16 +444,17 @@ cpubexp:
 
 #END cbpuexp
 
+#--------------------------------------------------------------------------------------
 
 .text
 cprivexp:
-# Purpose: compute private key exponent from totient and pubKeyExp
-#   This function will return a private key exponent for valid totient and pubKeyExp
-#   Return -1, if private key exponent can't be computed
-#
-# Program dictionary:
-# r4:	totient phi(n)
-# r5:	pubKeyExp
+    # Purpose: compute private key exponent from totient and pubKeyExp
+    #   This function will return a private key exponent for valid totient and pubKeyExp
+    #   Return -1, if private key exponent can't be computed
+    #
+    # Program dictionary:
+    # r4:	totient phi(n)
+    # r5:	pubKeyExp
 
     # Push to the stack
     SUB sp, sp, #12
@@ -512,9 +534,16 @@ cprivexp:
 
 #END cprivexp
 
+#--------------------------------------------------------------------------------------
 
 .text
 encrypt:
+
+    #Purpose: Encrypt given clear-text value using formula (m^e mod N)
+    #Program dictionary:
+    #r4:	clear-text value
+    #r5:	pubKeyExp
+    #r6:	modulus N
 
     #push stack
     SUB sp, sp, #16
@@ -550,9 +579,16 @@ encrypt:
 
 #END encrypt
 
+#--------------------------------------------------------------------------------------
 
 .text
 decrypt:
+
+    #Purpose: Decrypt given encrypted value using formula (c^d mod N)
+    #Program dictionary:
+    #r4:	encrypted value
+    #r5:	privKeyExp
+    #r6:	modulus N
 
     #push stack
     SUB sp, sp, #16
@@ -562,7 +598,7 @@ decrypt:
     STR r6, [sp, #12]
 
     MOV r4, r0          // move encrypted character to R4
-    MOV r5, r1          // move pubKeyExp to R5
+    MOV r5, r1          // move privKeyExp to R5
     MOV r6, r2          // move modulus N to R6
   
     #m = (c^d) % n
@@ -590,11 +626,19 @@ decrypt:
 
 .text
 modulus_exponentiation:
-# Program Dictionary
-# r4 - base
-# r5 - exponent
-# r6 - modulus
-# r7 - result
+    # Purpose: Compute modular exponentiation using right-to-left binary method.
+    #   Right-to-left binary method is used to compute modular exponentiation of large numbers.
+    #   Reference: https://en.wikipedia.org/wiki/Modular_exponentiation#Right-to-left_binary_method
+
+    # This method is used to solve modular exponentiation formulas for both encryption and decryption.
+    #  Modular exponentiation formula for encryption is c = m^e mod n
+    #  Modular exponentiation formula for encryption is m = c^d mod n
+    
+    # Program Dictionary
+    # r4 - base
+    # r5 - exponent
+    # r6 - modulus
+    # r7 - result
 
     #push stack
     SUB sp, sp, #20
@@ -659,7 +703,7 @@ modulus_exponentiation:
 
 # ----------------------------------------------------------------------------------
 # Purpose: To encrypt a clear text file
-#   We will use encrypt functionn to encrypt contents in clear text file.
+#   We will use modulus_exponentiation functionn to encrypt contents in clear text file.
 #   
 #   Input : public key exponent (r0), modulus N (r1)
 #   Output: None
@@ -800,8 +844,9 @@ encrypt_message:
 
 # END encrypt_message
 # ----------------------------------------------------------------------------------
+
 # Purpose: To decrypt an encrypted file
-#   We will use decrypt functionn to decrypt contents in encrypted file.
+#   We will use modulus_exponentiation function to decrypt contents in encrypted file.
 #   
 #   Input : private key exponent (r0), modulus N (r1)
 #   Output: None
@@ -947,8 +992,11 @@ decrypt_message:
 
 # END decrypt_message
 # ----------------------------------------------------------------------------------
+
 .text
 print_line_separator:
+    # Purpose: print a line separator in the console/terminal
+
     # Push to the stack
     SUB sp, sp, #4
     STR lr, [sp, #0]
